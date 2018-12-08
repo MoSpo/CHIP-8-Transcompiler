@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="makefile" />
+    <None Include="README.md" />
+    <None Include="examples\15PUZZLE" />
+    <None Include="examples\BLINKY" />
+    <None Include="examples\BLITZ" />
+    <None Include="examples\BRIX" />
+    <None Include="examples\CONNECT4" />
+    <None Include="examples\GUESS" />
+    <None Include="examples\HIDDEN" />
+    <None Include="examples\INVADERS" />
+    <None Include="examples\KALEID" />
+    <None Include="examples\MAZE" />
+    <None Include="examples\MERLIN" />
+    <None Include="examples\MISSILE" />
+    <None Include="examples\PONG" />
+    <None Include="examples\PONG2" />
+    <None Include="examples\PUZZLE" />
+    <None Include="examples\SYZYGY" />
+    <None Include="examples\TANK" />
+    <None Include="examples\TETRIS" />
+    <None Include="examples\TICTAC" />
+    <None Include="examples\UFO" />
+    <None Include="examples\VBRIX" />
+    <None Include="examples\VERS" />
+    <None Include="examples\WIPEOFF" />
+  </ItemGroup>
+</Project>
