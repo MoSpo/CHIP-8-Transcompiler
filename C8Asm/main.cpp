@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 
 		ofstream file;
 		string str(argv[argc - 1]);
-		file.open(str.substr(0, str.size() - 1), ios::binary);
+		file.open(str.substr(0, str.size() - 3), ios::binary);
 
 		for (string line; getline(infile, line); ) {
 			size_t rest = line.find(" ");
