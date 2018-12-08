@@ -1,6 +1,7 @@
 #include "main.h"
 #include <initializer_list>
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -20,25 +21,37 @@ string OP_Eval(const string& operationName, const string& operationDescription, 
         }
     } else {
         stringstream stream;
-        stream << uppercase << hex << word;
-		if (word < 256) out += "00";
+        stream << setw(4) << setfill('0') << uppercase << hex << word;
         out += stream.str();
     }
 
-	if (VERBOSE) {
-		int l = out.length();
-		for (int i = 0; i < 15 - l; i++) out += " ";
-		out += "//" + operationDescription;
-	}
+    if (VERBOSE) {
+        int l = out.length();
+        for (int i = 0; i < 15 - l; i++) out += " ";
+        out += "//" + operationDescription;
+    }
 
-    return out + "\n";
+    return out;
 }
 
-string OP_NULL() { 
+string OP_NULL() {
+    string out = "";
+    
+    if (STDASM) {
+        out += "NULL?";
+    }
     stringstream stream;
-    stream << uppercase << hex << word;
-    return "NULL (" + stream.str() + ")\n";
-} //Function Array Pointer Padding
+    stream << setw(4) << setfill('0') << uppercase << hex << word;
+    out += stream.str();
+
+    if (VERBOSE) {
+        int l = out.length();
+        for (int i = 0; i < 15 - l; i++) out += " ";
+        out += "// NULL";
+    }
+    
+    return out;
+}
 
 string OP_FX15() { return OP_Eval("FX15", "DELAY_TIMER = V[X]", { 0x0F00 }); }
 string OP_FX18() { return OP_Eval("FX18", "SOUND_TIMER = V[X]", { 0x0F00 }); }

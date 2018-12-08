@@ -7,6 +7,8 @@ bool STDASM;
 unsigned short word;
 unsigned char program[3696];
 
+unsigned int length;
+
 using namespace std;
 
 bool Error(const char msg[]) {
@@ -22,6 +24,7 @@ bool OpenInputFile(int argc, char *argv[]) {
         if (!file) return Error("Unable to open file");
 
         int i = 0;
+        length = 0;
 
         while(true) {
             file.read(reinterpret_cast<char*>(&program[i]), 1);
@@ -32,6 +35,7 @@ bool OpenInputFile(int argc, char *argv[]) {
         
         file.close();
         
+        length = i;
         for (; i < 3696; i++) program[i] = 0;
         
     }
@@ -77,9 +81,12 @@ int main(int argc, char *argv[]) {
         file.open(str + "asm");
         int PC = 0;
 
-        while (true) {
+        word = (program[PC] << 8) | (program[PC + 1]);
+        file << OP_Lex();
+        PC+=2;
+        while (PC < length) {
+            file << "\n"
             word = (program[PC] << 8) | (program[PC + 1]);
-            if (word == 0) break;
             file << OP_Lex();
             PC+=2;
         }

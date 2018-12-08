@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 				return Error("ASM layout file - Unable to parse (yet)");
 			} else {
 				uint16_t word = stoi(line, 0, 16);
-				char fst = word & 0xFF00;
+				char fst = (word & 0xFF00) >> 8;
 				char snd = word & 0x00FF;
 				file.write((char*)&fst, sizeof(char));
 				file.write((char*)&snd, sizeof(char));
