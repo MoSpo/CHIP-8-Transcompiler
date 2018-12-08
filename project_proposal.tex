@@ -1,0 +1,141 @@
+\documentclass[12pt,a4paper,twoside]{article}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage[margin=25mm]{geometry}
+\usepackage{graphicx}
+\usepackage{parskip}
+\begin{document}
+
+\begin{center}
+\Large
+Computer Science Tripos -- Part II -- Project Proposal\\[4mm]
+\LARGE
+CHIP-8 Static Recompiler Using LLVM\\[4mm]
+
+\large
+Luke Sheeran, Pembroke College
+
+18th October 2018
+\end{center}
+
+\vspace{5mm}
+
+\textbf{Project Supervisor:} K. Taylor (ksw1000)
+
+\textbf{Director of Studies:} Dr A. Madhavapeddy (avsm2)
+
+\textbf{Project Overseers:} Dr. A. Dawar (ad260), Dr. S. W. Moore (swm11) \\\& Dr. A. W. Moore (awm22)
+
+% Main document
+
+\section*{Introduction}
+
+In efforts to preserve aging systems, emulation has been used to allow older programs to run on modern devices, such as ones which use the x86 instruction set. However, as it is a form of dynamic translation, emulators come with an overhead. This leads to the stifling of development for emulators of more modern systems.
+
+Another way to achieve the same goal would be to use a Ahead of Time (AoT) compiler, which has no overhead compared to an emulator at run-time. However, this method was historically rarely used; a lack of separation of code and data and a reliance on self-modifying code to overcome space limitations made it infeasible to recompile code from older systems. Now though, modern consoles lack such design features, due to the coming of cheaper and faster memory as well as increased security awareness. It follows then that there is great potential for recompilation in the future of program preservation.
+
+The proposed project explores an example of such a recompiler through the objective of converting bytecode for the CHIP-8 virtual machine into native machine code. The CHIP-8 was devised for the COSMAC VIP and Telmac 1800 8-bit microcomputers from the mid-1970s to serve as a platform for creating video games. Due to its unique bytecode structure, it guarantees the separation of data and code as well as renders the user unable to dynamically change the executable code.
+
+The project will use the LLVM compiler infrastructure, which supplies an intermediate code (LLVM IR) and a back end to allow the project to be compiled to multiple target machines.
+
+\section*{Starting Point}
+
+As of writing there are many open-source CHIP-8 interpreters along with multiple tutorials on how to build your own. The CHIP-8 virtual machine also has a lot of documentation surrounding it. I myself have written a CHIP-8 interpreter and so already have some prior experience with the system. However, it is hard to find anything on CHIP-8 static recompilers, so much of the core of this project will be exploration of the territory and will require a more in depth understanding of the CHIP-8 binaries.
+
+There does exist an attempted project to statically compile games from the Nintendo Entertainment System (NES) using LLVM. However, due to problems mentioned prior with older systems, the project ended up compiling an interpreter into the binary executable, something which this project wants to avoid at all costs. The NES project does however contain many documented examples of pitfalls which could similarly effect this project. This means it could serve as a useful reference during the implementation of the recompiler.
+
+The modular design of LLVM makes it suitable for this project, however I have no past experience using LLVM and will need to conduct some research beforehand. The use of LLVM also leads me to use C++, which I also have little prior experience with. C, which was taught last year and I am comfortable using, will be used to write I/O modules for the project and will be compiled using the Clang front-end for LLVM. The SDL2 libary is one I have used before for graphics related projects and is compatible with C/C++, making it a good choice to use for the output module.
+
+
+\section*{Resources Required}
+
+For this project I shall be using both a desktop computer running Windows 8 and a laptop running Arch Linux. I accept full responsibility for these machines. Development will involve the use of Visual Studio 2017 and Eclipse IDE for the desktop and laptop respectively. A backup of the entire project will exist on Github as well as my personal USB storage device. If one computer fails, all development will fall onto the other working machine. I require no other special resources.
+
+\section*{Substance and Structure}
+
+The project breaks down into four distinct categories:
+
+\begin{enumerate}
+
+\item \textbf{Creating the disassembler.} To be written in C++. From the binary bytecode files, an Abstract Syntax Tree (AST) needs to be produced in order to generate the LLVM IR code later on in the project. More human-readable output will also be produced by the disassembler to assist in debugging.
+
+\item \textbf{Creating the LLVM IR code generator.} To be also written in C++ with the LLVM compiler infrastructure. Here a LLVM IR module is created which stores global variables, symbol tables and other such structures. The AST produced previously will be parsed to generate the intermediate code which will be stored in the basic blocks attached to the module. The code produced will then be translated into platform-specific assembly code.
+
+\item \textbf{Creating the graphical and audio output handler.} To be written in C with the SDL2 library. This will be called by the generated code and will be designed to work as asynchronously as possible from the rest of the code. It will be compiled using the Clang front-end to generate LLVM IR code to be linked in with the code generated.
+
+\item \textbf{Creating the keyboard input handler.} Similarly, this will be written in C and will also use the SDL2 library. It will read and store the state of the keyboard whilst the generated code is running.
+
+\end{enumerate}
+
+\section*{Evaluation and Success Criteria}
+
+Evaluation will have three distinct themes: correctness, usage and speed. 
+
+Correctness will be determined by examining the output of the compiled executable against the output of a reliable CHIP-8 emulator with the same bytecode ROM input. The recompiler will be judged on how well it mimics the emulator in timing, graphical and audio output as well as the responsiveness of keyboard input. Also, both open-source and bespoke CHIP-8 test programs will be run through the recompiler to check for the correctness of individual instructions.
+
+Usage will also be compared across the emulator and the compiled code in terms of total executable size and memory usage over the lifetime of each program. CHIP-8 test binaries will be written to either maximise the size of the program or to use as much memory as possible. 
+
+The speed of both the recompiler and the emulator will also be tested by removing all of the timing delays, which keep the programs running at the correct speeds, and comparing the maximum speeds of execution for both applications. Logging may also be used to obtain the amount of cycles per individual instruction, allowing more nuanced speed comparisons.
+
+The project will be successful if a recompiler is produced that successfully translates a CHIP-8 binary file into a native executable, which in turn is able to correctly reproduce the output of the same binary emulated. The native executable itself must be statically compiled completely and must be able to run without any dynamic evaluation of the original bytecode.
+
+\section*{Extensions}
+
+Potential project extensions given time are as follows:
+
+\begin{enumerate}
+
+\item \textbf{Extending the disassembler to SuperCHIP / XO-CHIP.} These instruction set extensions allow the CHIP-8 virtual machine to use higher resolution graphics and add an extra bitplane to the display logic allowing up to 4 colours on screen. However, due to bugs in the original SuperCHIP interpreter, some instruction behave differently meaning the recompiler would either have to account for different interpretations of operations depending on the system, or risk losing backwards compatibility with some older programs.
+
+\item \textbf{Compiling to JavaScript backend.} This would allow the executable to be portable across devices and to run in the browser. It would also open up comparisons between the native executable as well as the emulated CHIP-8 bytecode in terms of speed, size and memory usage.
+
+\end{enumerate}
+
+\section*{Timetable}
+
+Work will begin on the week starting \textbf{22/10/2018}. The project is broken down into 2 week chunks, each with concrete goals, to encourage good time management and allow reflection on overall progress.
+
+\begin{enumerate}
+
+\item \textbf{Michaelmas: 22nd October -- 4th November}\\
+Begin exploring CHIP-8 bytecode by writing some CHIP-8 programs from scratch. Disassemble part of a CHIP-8 binary by hand to gain an intuition of how the instruction set works. Reading of the LLVM documentation as well as literature on C++ should also occur.\\
+\textbf{End goal:} gaining a sufficient understanding of the C++ language, the CHIP-8 bytecode as well as elementary knowledge of LLVM in order to begin programming crucial parts of the project. 
+
+\item \textbf{Michaelmas: 5th November -- 18th November}\\
+Write the disassembler for CHIP-8 in C++. the program will be tested regularly and compared against hand disassembled code. A human-readable output for the disassembler will also be added.\\
+\textbf{End goal:} to have a functioning CHIP-8 disassembler.
+
+\item \textbf{Michaelmas: 19th November -- 2nd December}\\
+Begin a deeper look into the documentation of LLVM and begin experimenting with IR code. Plan the framework of the code generator for the project.\\
+\textbf{End goal:} the bones of the program should be finished and implementations of functionality should have begun.
+
+\item \textbf{Michaelmas: Vacation}\\
+Continue working on the generator. Begin writing the framework for the final\\ dissertation and start preparing a progress report and presentation.\\
+\textbf{End goal:} have the final dissertation and progress report started.
+
+\item \textbf{Lent: 14th January -- 27th January} \\
+The graphics part of the output module should be started in order to test the generator. After the generated executable is able to produce output to the screen, begin finding and correcting any programming mistakes found. Work should continue on the progress report and final dissertation. \\
+\textbf{End goal:} the generator should be in a presentable state and the graphics code should be mostly complete. The progress report should be finished and the presentation will be given.
+
+\item \textbf{Lent: 28th January -- 10th February} \\
+Begin adding audio to the output module as well as start work on the input module. Begin optimising the code generation as well as the disassembler. If on time, begin any project extensions.\\
+\textbf{End goal:} the output module should be complete and the input module should be near completion.
+
+\item \textbf{Lent: 11th February -- 24th February}\\
+Finish the input module and then begin evaluation. Finish the draft dissertation.\\
+\textbf{End goal:} a complete project and a near complete draft dissertation should be produced, along with a sizeable amount of the evaluations finished.
+
+\item \textbf{Lent: 25th February -- 10th March}\\
+Finish all the evaluations and continue working on the dissertation.\\
+\textbf{End goal:} evaluations should be completed and a complete draft dissertation should be submitted to the relevant parties.
+
+\item \textbf{Lent: Vacation}\\
+Based on feedback, revise the draft dissertation and potentially do more work on the project if requested.\\
+\textbf{End goal:} have the final dissertation ready to be submitted.
+
+\item \textbf{Easter: 15th April -- 28th April} \\
+Everything should be completed and the final edition of the dissertation as well as the project should be submitted.\\
+\textbf{End goal:} submit the project and dissertation.
+
+\end{enumerate}
+
+\end{document}

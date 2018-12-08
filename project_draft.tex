@@ -1,0 +1,68 @@
+\documentclass[12pt,a4paper,twoside]{article}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage[margin=25mm]{geometry}
+\usepackage{graphicx}
+\usepackage{parskip}
+\begin{document}
+\begin{titlepage}
+\title{CHIP-8 Static Recompiler Using LLVM}
+\author{Luke Sheeran, Pembroke College}
+\date{???th ??? 2019}
+\maketitle
+\thispagestyle{empty}
+\end{titlepage}
+\begin{tabular}{ccc}
+\textbf{Name} & Luke Sheeran \\
+\textbf{College} & Pembroke \\
+\textbf{Project Title} &  CHIP-8 Static Recompiler Using LLVM\\
+\textbf{Examination} & Computer Science Tripos – Part II, July 2019 \\\textbf{Word Count} & ??? \\\textbf{Project Originator} & Luke Sheeran \\\textbf{Project Supervisor} & Kate Taylor \\
+\end{tabular}
+
+\textbf{Original Aims}
+\begin{itemize}
+\item ---
+\end{itemize}
+\textbf{Work Completed}
+
+\textbf{Special Difficulties}
+\clearpage
+\textbf{\LARGE{Declaration}}
+
+I, Luke Sheeran of Pembroke College, being a candidate for Part II of the Computer Science Tripos, hereby declare that this dissertation and the work
+described in it are my own work, unaided except as may be specified below, and that
+the dissertation does not contain material that has already been used to any substantial
+extent for a comparable purpose.
+\clearpage
+\textbf{\LARGE{Contents}}
+\clearpage
+\section{Introduction}
+\begin{itemize}
+\item Background
+\item Motivations
+
+When is it worthwhile?
+
+\item Challenges
+\item Related Work
+\end{itemize}
+\clearpage
+\section{Preparation}
+    All the work that was completed before any code was written.
+\begin{itemize}
+\item The CHIP-8 architecture
+
+Problem instructions - Clear the Display, Random Number, Write all registers to the stack
+Very tricky - Anything todo with timers!!
+\item LLVM Compiler Framework
+
+Chip-8 is in a list, output LLVM is a list / AST. Mappings are 1 to 1 with exceptions. Data driven translation vs hard coded translation.
+
+\item Language/Grammar structure comparisons
+\item Languages and Skills
+\item How to know what can safely be done at compile time
+\end{itemize}
+Can you use the same shape syntax tree between the CHIP-8 and the LLVM code?
+Writing what the LLVM code you would like to produce would look like 
+\section{Implementation}
+
+\end{document}
