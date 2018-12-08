@@ -18,18 +18,19 @@ string OP_Eval(const string& operationName, const string& operationDescription, 
             stream << ((word & op) >> i);
             out += " " + stream.str();
         }
-
-        if (VERBOSE) { 
-            int l = out.length();
-            for(int i = 0; i < 15-l; i++) out += " ";
-            out += "//" + operationDescription;
-        }
-    }
-    else {
+    } else {
         stringstream stream;
         stream << uppercase << hex << word;
+		if (word < 256) out += "00";
         out += stream.str();
     }
+
+	if (VERBOSE) {
+		int l = out.length();
+		for (int i = 0; i < 15 - l; i++) out += " ";
+		out += "//" + operationDescription;
+	}
+
     return out + "\n";
 }
 
