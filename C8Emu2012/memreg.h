@@ -5,7 +5,7 @@ extern unsigned char MEMORY[4096]; //Dear God, there must be a better way than t
 //the uppermost 256 are reserved for display refresh,
 //and the 96 bytes below that were reserved for call stack, internal use, and other variables.
 
-extern enum Usage { Unused, Data, Code, Both };
+enum Usage { Unused, Data, Code, Both };
 
 extern Usage MEMORY_USAGE[4096];
 

@@ -1,4 +1,4 @@
-#include <SDL.h>
+#include<SDL2/SDL.h>
 #include <iostream>
 #include <fstream>
 
@@ -95,7 +95,7 @@ public:
 						 for (Usage u : MEMORY_USAGE) {
 							 file << u + "\n";
 						 }
-						 file.close;
+						 file.close();
 						 quit = true;
 					 }
 					 break;

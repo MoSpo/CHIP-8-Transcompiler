@@ -1,11 +1,6 @@
 #include "main.h"
 #include "memreg.h"
 #include "display.h"
-
-#include <SDL.h>
-
-#include <iostream>
-#include <fstream>
 #include <time.h>
 //#include <iomanip> //used for debug
 
