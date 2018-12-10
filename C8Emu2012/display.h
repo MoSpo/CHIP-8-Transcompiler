@@ -1,6 +1,13 @@
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#include<SDL.h>
+#else
 #include<SDL2/SDL.h>
+#endif
 #include <iostream>
 #include <fstream>
+#include <sstream>
+
+std::string NAME;
 
 class Display {
 	int scale = 20;
@@ -91,10 +98,12 @@ public:
 					 if (e.type == SDL_KEYDOWN)
 					 {
 						 std::ofstream file;
-						 file.open("Memory_access.txt");
+						 file.open(NAME + "_MemoryTrace.txt");
+						 std::stringstream stream;
 						 for (Usage u : MEMORY_USAGE) {
-							 file << u + "\n";
+							 stream << u << "\n";
 						 }
+						 file << stream.str();
 						 file.close();
 						 quit = true;
 					 }

@@ -31,6 +31,7 @@ int OpenFile(int &argc, char *argv[])
 
 	else //If one was...
 	{
+		NAME = argv[1];
 		FILE *FILESTREAM = fopen(argv[1], "rb");	// Open in read binary
 		if (FILESTREAM)								// If successful...
 		{

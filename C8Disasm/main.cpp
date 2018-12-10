@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         file << OP_Lex();
         PC+=2;
         while (PC < length) {
-            file << "\n"
+			file << "\n";
             word = (program[PC] << 8) | (program[PC + 1]);
             file << OP_Lex();
             PC+=2;
