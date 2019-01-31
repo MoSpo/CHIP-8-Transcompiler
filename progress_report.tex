@@ -31,21 +31,24 @@ ls739@cam.ac.uk
 
 
 \section*{Accomplishments and Design Decisions}
-All preliminary research has been completed, though naturally the documentation for both LLVM and the CHIP-8 are consulted when needed. A simple assembler has been written to produce custom CHIP-8 binaries to test the code generator. I have decided to extend the CHIP-8 instruction set architecture in order to aid in debugging the produced IR code, adding instructions which print the contents of registers to standard output.
+All preliminary research has been completed, though naturally the documentation for both LLVM and the CHIP-8 are consulted when needed.(and c++?) A simple assembler has been written to produce custom CHIP-8 binaries to test the code generator. I have decided to extend the CHIP-8 instruction set architecture in order to aid in debugging the produced IR code, adding instructions which print the contents of registers to standard output.
+(ast? passes?)
 
 I have also modified a CHIP-8 emulator to  dynamically trace memory accesses and write the different types to a file. A python script then converts them into images. This helps me visualise data and code locations, giving me insight into a few future optimisations.
 
-The framework for the LLVM code generator has been completed, and over a third of CHIP-8 operations have been implemented.
+The framework for the LLVM code generator has been completed, and over a third of CHIP-8 operations have been implemented. (which third? why?)
 
 \section*{Difficulties}
 An early misconception I had was about how data was handled in the CHIP-8 binaries; I had assumed there was no raw data as I thought there was no way to access them. However, disassembling the binaries showed otherwise and I have had to figure out ways to differentiate between code and data.
 
 The LLVM documentation has been more challenging to understand than I expected and took slightly longer than what I had allocated, though I have now reached a good understanding of the library.
+(global vaules?)
 
-There are also ongoing issues with the handling of jump commands, specifically indirect jumps. Though I have thought of fixes for these issues, they are not yet implemented and are untested.
-
+There are also ongoing issues with the handling of jump commands, specifically indirect jumps. Though I have thought of fixes for these issues(expand?), they are not yet implemented and are untested.
+(llvm linker issue?)
+(add poison?)
 
 \section*{Project Progress}
-The project as of writing is around two weeks behind the original timetable, though mainly due to personal issues over the Christmas break and not unprecedented difficulties with the project. However, subsequent work has shown I may have overestimated the time needed for the latter part of the project - all the external SDL calls could be implemented in a week instead of four. This means I should be able to catch up to my original timetable, as well as have time to complete some extension tasks in the future.
+The project as of writing is around two weeks behind the original timetable, though mainly due to personal issues over the Christmas break and not unprecedented difficulties with the project. However, subsequent work has shown I may have overestimated the time needed for the latter part of the project - all the external SDL(?) calls could be implemented in a week instead of four (?). This means I should be able to catch up to my original timetable, as well as have time to complete some extension tasks in the future.
 
 \end{document}
