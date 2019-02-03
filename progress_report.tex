@@ -1,0 +1,55 @@
+\documentclass[12pt,a4paper,twoside]{article}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage[margin=25mm]{geometry}
+\usepackage{graphicx}
+\usepackage{parskip}
+\begin{document}
+
+\begin{center}
+\Large
+Computer Science Tripos -- Part II -- Progress Report\\[4mm]
+\LARGE
+CHIP-8 Static Recompiler Using LLVM\\[4mm]
+
+\large
+Luke Sheeran, Pembroke College
+
+ls739@cam.ac.uk
+
+18th October 2018
+\end{center}
+
+\vspace{5mm}
+
+\textbf{Project Supervisor:} K. Taylor (ksw1000)
+
+\textbf{Director of Studies:} Dr A. Madhavapeddy (avsm2)
+
+\textbf{Project Overseers:} Dr. A. Dawar (ad260), Dr. S. W. Moore (swm11) \\\& Dr. A. W. Moore (awm22)
+
+% Main document
+
+
+\section*{Accomplishments and Design Decisions}
+All preliminary research has been completed, though naturally the documentation for both LLVM and the CHIP-8 are consulted when needed. An usable understanding of the C++ language has also been developed, with learning still ongoing.
+
+A simple assembler has been written to produce custom CHIP-8 binaries to test the code generator. I have decided to extend the CHIP-8 instruction set architecture in order to aid in debugging the produced IR code, adding instructions which print the contents of registers to standard output.
+
+The AST produced by the dissembler is fairly bare bones, though serves it's purpose at this time. One pass is used over the AST as of writing, though more passes will be needed for proper basic block and label generation for jumps.
+
+I have also modified a CHIP-8 emulator to dynamically trace memory accesses and write the information to a file. A python script then converts these files into images, helping me visualise data and code locations and giving me insight into future potential optimisations.
+
+The framework for the LLVM code generator has been completed, and over a third of the CHIP-8 operations have been implemented. The implemented operations consist mainly of maths and bit manipulations as they easily map to LLVM intermediate code and, by focusing on them first, give me a better understanding on how to write subsequent instructions.
+
+\section*{Difficulties}
+An early misconception I had was about how data was handled in the CHIP-8 binaries; I had naively assumed there was no raw data stored in the ROM given my belief that there was no way to access it if there was. However, disassembling the binaries showed otherwise - one certain instruction I misunderstood the propose of is commonly used to load ROM into the registers, and I've had to figure out ways to differentiate between code and data within the binary files.
+
+The LLVM documentation has also been more challenging to understand than I expected and took slightly longer to get up to speed with than what I had allocated on my proposed timetable, with particular issues regarding LLVM setup and module creation as well as global value generation.
+
+There are also ongoing issues with the handling of jump commands, specifically indirect jumps. Though my recent analysis has shown indirect jumps may only move forward by less than a byte from a static address, which I wish to take advantage of, there is not yet implementation for such jumps and my newest solution is untested.
+
+
+\section*{Progress and Timetable Revisions}
+The project as of writing is around two weeks behind the original timetable, though this is mainly due to personal issues over the Christmas break and not unprecedented difficulties with the project. Subsequent work, though, has shown I may have overestimated the time needed for the latter part of the project - all the external SDL libary calls for audio visual output as well as keyboard input could be implemented in a week instead of four due to external function call being easier to generate in LLVM than expected. This means I should be able to catch up to my original timetable in the next two weeks, using the time to finish the code generation and writing of the external SDL calls, as well as have time to complete some extension tasks in the future.
+
+\end{document}

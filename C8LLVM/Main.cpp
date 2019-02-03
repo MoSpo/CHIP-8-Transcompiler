@@ -42,11 +42,10 @@ bool OpenInputFile(int argc, char *argv[]) {
 		int i = 0;
 		length = 0;
 
-		while (true) {
+		while (file) {
 			file.read(reinterpret_cast<char*>(&program[i]), 1);
 			file.read(reinterpret_cast<char*>(&program[i + 1]), 1);
 			i += 2;
-			if (!file) break;
 		}
 
 		file.close();

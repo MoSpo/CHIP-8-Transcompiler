@@ -154,5 +154,5 @@ Generator::Generator(Ast* e) {
 	t = new Tracker{ e };
 };
 Generator::~Generator() {
-	delete(t);
+	delete(t); //TODO: Remove Tracker and merge
 };

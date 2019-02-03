@@ -5,7 +5,7 @@
 class Generator {
 
 private:
-	Tracker* t;
+	Tracker* t; //TODO: Remove Tracker and merge
 
 	void OP_NULL();
 
