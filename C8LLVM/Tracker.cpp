@@ -58,11 +58,6 @@ Tracker::~Tracker() {
 	delete(treeEntry);
 	delete(mainModule);
 	for (int i = 0; i < 16; i++) {
-		delete(rX[i]);
+		//delete(rX[i]); NOTE: can only delete variables allocated by new
 	}
-	delete(rX);
-	delete(rI);
-	delete(putchar);
-	delete(main);
-	delete(currentBlock);
 }
