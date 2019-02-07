@@ -29,7 +29,7 @@ private:
 	Ast* OP_8XY7(); //"8XY7", "V[X] = V[Y] - V[X] w/ VF set in no underflow", { 0x0F00, 0x00F0 }); }
 	Ast* OP_8XYE(); //"8XYE", "V[X] <<= 1  w/ VF set to lost bit", { 0x0F00, 0x00F0 }); }
 
-	Ast*(Lexer::*OP_Table_8XY_[15])() { &Lexer::OP_8XY0, &Lexer::OP_8XY1, &Lexer::OP_8XY2, &Lexer::OP_8XY3, &Lexer::OP_8XY4, &Lexer::OP_8XY5, &Lexer::OP_8XY6, &Lexer::OP_8XY7, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_8XYE };;
+	Ast*(Lexer::*OP_Table_8XY_[15])() { &Lexer::OP_8XY0, &Lexer::OP_8XY1, &Lexer::OP_8XY2, &Lexer::OP_8XY3, &Lexer::OP_8XY4, &Lexer::OP_8XY5, &Lexer::OP_8XY6, &Lexer::OP_8XY7, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_8XYE };
 	Ast* OP_8XY_();
 
 	Ast* OP_9XY0(); //"9XY0", "If V[X] != V[Y], skip next instruction", { 0x0F00, 0x00F0 }); }
@@ -46,7 +46,7 @@ private:
 	Ast* OP_FX18(); //"FX18", "SOUND_TIMER = V[X]", { 0x0F00 }); }
 	Ast* OP_FX1E(); //"FX1E", "VI += V[X] w/ VF set in overflow", { 0x0F00 }); }
 
-	Ast*(Lexer::*OP_Table_FX1_[15])() { &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_FX15, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_FX18, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_FX1E };;
+	Ast*(Lexer::*OP_Table_FX1_[15])() { &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_FX15, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_FX18, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_NULL, &Lexer::OP_FX1E };
 	Ast* OP_FX1_();
 
 	Ast* OP_FX29(); //"FX29", "VI = FONT @ V[X]", { 0x0F00 }); }

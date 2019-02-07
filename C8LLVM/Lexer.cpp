@@ -89,7 +89,7 @@ Ast* Lexer::OP_FX__() { return (this->*OP_Table_FX__[(word & 0x00F0) >> 4])(); }
 
 
 Ast* Lexer::LexInput() {
-	int PC = 0;
+	unsigned int PC = 0;
 	word = (program[PC] << 8) | (program[PC + 1]);
 	Ast* Entry = (this->*OP_Table_F000[(word & 0xF000) >> 12])(); //Setup first node
 	Ast* Current = Entry;

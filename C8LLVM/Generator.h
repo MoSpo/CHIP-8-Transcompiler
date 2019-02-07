@@ -29,7 +29,7 @@ private:
 	void OP_8XY7(); //"8XY7", "V[X] = V[Y] - V[X] w/ VF set in no underflow", { 0x0F00, 0x00F0 }); }
 	void OP_8XYE(); //"8XYE", "V[X] <<= 1  w/ VF set to lost bit", { 0x0F00, 0x00F0 }); }
 
-	void(Generator::*OP_Table_8XY_[15])(){ &Generator::OP_8XY0, &Generator::OP_8XY1, &Generator::OP_8XY2, &Generator::OP_8XY3, &Generator::OP_8XY4, &Generator::OP_8XY5, &Generator::OP_8XY6, &Generator::OP_8XY7, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_8XYE };;
+	void(Generator::*OP_Table_8XY_[15])(){ &Generator::OP_8XY0, &Generator::OP_8XY1, &Generator::OP_8XY2, &Generator::OP_8XY3, &Generator::OP_8XY4, &Generator::OP_8XY5, &Generator::OP_8XY6, &Generator::OP_8XY7, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_8XYE };
 	void OP_8XY_();
 
 	void OP_9XY0(); //"9XY0", "If V[X] != V[Y], skip next instruction", { 0x0F00, 0x00F0 }); }
@@ -46,7 +46,7 @@ private:
 	void OP_FX18(); //"FX18", "SOUND_TIMER = V[X]", { 0x0F00 }); }
 	void OP_FX1E(); //"FX1E", "VI += V[X] w/ VF set in overflow", { 0x0F00 }); }
 
-	void(Generator::*OP_Table_FX1_[15])(){ &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_FX15, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_FX18, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_FX1E };;
+	void(Generator::*OP_Table_FX1_[15])(){ &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_FX15, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_FX18, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_NULL, &Generator::OP_FX1E };
 	void OP_FX1_();
 
 	void OP_FX29(); //"FX29", "VI = FONT @ V[X]", { 0x0F00 }); }

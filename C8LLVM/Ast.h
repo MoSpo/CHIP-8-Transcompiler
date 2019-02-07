@@ -1,4 +1,4 @@
-#include "lib.h"
+#include "Lib.h"
 #ifndef AST_H
 #define AST_H
 class Ast {
