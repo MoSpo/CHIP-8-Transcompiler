@@ -1,29 +1,26 @@
 #include "Lexer.h"
 #include "Ast.h"
 #include "Flags.h"
-#include <initializer_list>
-#include <sstream>
-#include <iomanip>
 
 using namespace std;
 
-Ast* Lexer::OP_Eval(const string& operationName, const string& operationDescription, const initializer_list<unsigned int>& operands) {
+Ast* Lexer::OP_Eval(const string& operationName, const string& operationDescription, const vector<unsigned int>& operandMasks) {
 
 	unsigned char l = 0;
-	unsigned int ops[3]{0,0,0};
-    for (unsigned short op : operands) {
+	vector<unsigned int> opStore{};
+    for (unsigned short msk : operandMasks) {
         int i = 0;
-        while (((op >> i) & 0x1) == 0) {
+        while (((msk >> i) & 0x1) == 0) {
             i += 4;
         }
-        stringstream stream;
-		ops[l] = ((word & op) >> i);
+
+		opStore.push_back((word & msk) >> i);
 		l++;
     }
 
     //if (VERBOSE) { operationDescription; }
 
-	Ast* a = new Ast{ word, operationName, ops, l };
+	Ast* a = new Ast{ word, operationName, opStore, l };
     return a;
 }
 

@@ -54,7 +54,7 @@ void Generator::OP_8XY4(){
 
 	auto addXnY16 = t->builder.CreateAdd(zExtX16, zExtY16); //add zero extended registers together
 
-	auto byte = llvm::ConstantInt::get(t->mainModule->getContext(), llvm::APInt(8, 255));
+	auto byte = llvm::ConstantInt::get(t->mainModule->getContext(), llvm::APInt(16, 255));
 	auto oflw = t->builder.CreateICmpUGT(addXnY16, byte); //check if 16bit add is over 0xFF
 	auto zExtOflw = t->builder.CreateZExt(oflw, t->builder.getInt8Ty());
 	t->builder.CreateStore(zExtOflw, t->rX[15/*F*/]); //convert i1 bool to i8 and store it as overflow flag
@@ -147,7 +147,7 @@ void Generator::Generate(){
 
 	t->builder.CreateRet(llvm::ConstantInt::get(t->mainModule->getContext(), llvm::APInt(32, 0x00)));
 
-	t->mainModule->dump();
+	t->mainModule->print(llvm::outs(), nullptr);
 };
 
 Generator::Generator(Ast* e) {

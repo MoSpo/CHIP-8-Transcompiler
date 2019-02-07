@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 		Lexer l{program, length};
 		Ast* entry = l.LexInput();
 		Generator g{entry};
-
+		g.Generate();
 		/*std::ofstream file;
 		std::string str(argv[argc - 1]);
 		file.open(str + "asm");

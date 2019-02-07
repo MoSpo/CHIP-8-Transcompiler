@@ -6,7 +6,7 @@ class Lexer {
 
 private:
 
-	Ast* OP_Eval(const std::string& operationName, const std::string& operationDescription, const std::initializer_list<unsigned int>& operands);
+	Ast* OP_Eval(const std::string& operationName, const std::string& operationDescription, const std::vector<unsigned int>& operandMasks);
 	Ast* OP_NULL();
 
 	Ast* OP_0___(); //"00BX" print V[X] (Debug only), {0x000F}); "00E0", "Clear the display", {}); "00EE", "Return from subroutine", {});
