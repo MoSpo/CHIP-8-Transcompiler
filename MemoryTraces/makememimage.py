@@ -13,13 +13,13 @@ with open(sys.argv[1]) as f:
         if n == 0:
             for j in range (1024):
                 p[i,j] = (40,36,37)
-        if n == 1:
+        elif n == 1:
             for j in range (1024):
                 p[i,j] = (255,0,0)
-        if n == 2:
+        elif n == 2:
             for j in range (1024):
                 p[i,j] = (0,255,0)
-        if n == 3:
+        elif n == 3:
             alert = True
             for j in range (1024):
                 p[i,j] = (0,0,255)

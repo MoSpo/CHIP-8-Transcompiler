@@ -124,6 +124,29 @@ public:
 					 }
 					 break;
 
+                 case SDLK_0:
+					 if (e.type == SDL_KEYDOWN)
+					 {
+						 std::ofstream file1;
+						 file1.open(NAME + "_MemoryTrace.txt");
+						 std::stringstream stream1;
+						 for (Usage u : MEMORY_USAGE) {
+							 stream1 << u << "\n";
+						 }
+						 file1 << stream1.str();
+						 file1.close();
+                         std::ofstream file2;
+						 file2.open(NAME + "_FunctionTrace.txt");
+						 std::stringstream stream2;
+						 for (unsigned short u : FUNCTION_USAGE_AMT) {
+							 stream2 << u << "\n";
+						 }
+						 file2 << stream2.str();
+						 file2.close();
+						 quit = true;
+					 }
+					 break;
+            
 				 case SDLK_1:
 					 if (e.type == SDL_KEYDOWN)
 					 {

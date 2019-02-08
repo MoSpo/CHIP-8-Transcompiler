@@ -382,6 +382,7 @@ bool OLD_KEYS[16];
 			if (FUNCTION_PCS[SP] != 0) {
 				if (FUNCTION_PC_HEADER[PC] != FUNCTION_PCS[SP]) {
 					FUNCTION_USAGE_AMT[PC]++;
+                    FUNCTION_USAGE_AMT[PC+1]++;
 				}
 				FUNCTION_PC_HEADER[PC] = FUNCTION_PCS[SP];
 			}
