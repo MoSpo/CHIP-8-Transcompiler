@@ -9,6 +9,10 @@ enum Usage { Unused, Data, Code, Both };
 
 extern Usage MEMORY_USAGE[4096];
 
+extern unsigned short FUNCTION_PC_HEADER[4096];
+extern unsigned short FUNCTION_USAGE_AMT[4096];
+extern unsigned short FUNCTION_PCS[16];
+
 extern unsigned char REG_V[16]; //unsigned so C++ can interact with stored values properly
 
 extern unsigned short REG_VI; //the address regester, used for memory access n' stuff

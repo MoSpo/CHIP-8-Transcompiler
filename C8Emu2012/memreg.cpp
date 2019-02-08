@@ -1,3 +1,4 @@
+#include "memreg.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -8,9 +9,11 @@ unsigned char MEMORY[4096]; //Dear God, there must be a better way than this :(
 //the uppermost 256 are reserved for display refresh,
 //and the 96 bytes below that were reserved for call stack, internal use, and other variables.
 
-enum Usage { Unused, Data, Code, Both };
-
 Usage MEMORY_USAGE[4096];
+
+unsigned short FUNCTION_PC_HEADER[4096];
+unsigned short FUNCTION_USAGE_AMT[4096];
+unsigned short FUNCTION_PCS[16];
 
 unsigned char REG_V[16]; //unsigned so C++ can interact with stored values properly
 
@@ -62,11 +65,14 @@ int Init()
 	{
 		MEMORY[i] = 0;
 		MEMORY_USAGE[i] = Unused;
+		FUNCTION_PC_HEADER[i] = 0;
+		FUNCTION_USAGE_AMT[i] = 0;
 	}
 	for (unsigned char i = 0; i < 16; ++i)
 	{
 		REG_V[i] = 0;
 		STACK[i] = 0;
+		FUNCTION_PCS[i] = 0;
 		KEYS[i] = false;
 	}
 

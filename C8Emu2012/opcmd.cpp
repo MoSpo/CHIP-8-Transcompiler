@@ -252,6 +252,7 @@ bool OLD_KEYS[16];
 		STACK[SP] = PC;
 		++SP;
 		PC = (WORD & 0x0FFF);
+		FUNCTION_PCS[SP] = PC;
 		PC -= 2;
 	}
 	void OP_3XNN() //Compares register VX to NN, and if they are equal, skips the next command.
@@ -377,6 +378,13 @@ bool OLD_KEYS[16];
 		if (!EMU_STOP)
 		{
 			PC += 2;
+
+			if (FUNCTION_PCS[SP] != 0) {
+				if (FUNCTION_PC_HEADER[PC] != FUNCTION_PCS[SP]) {
+					FUNCTION_USAGE_AMT[PC]++;
+				}
+				FUNCTION_PC_HEADER[PC] = FUNCTION_PCS[SP];
+			}
 
 			if (TIMER_DELAY > 0)
 			{

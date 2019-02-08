@@ -94,13 +94,28 @@ public:
 				 //Select surfaces based on key press
 				 switch (e.key.keysym.sym)
 				 {
-				 case SDLK_0:
+				 case SDLK_EQUALS:
 					 if (e.type == SDL_KEYDOWN)
 					 {
 						 std::ofstream file;
 						 file.open(NAME + "_MemoryTrace.txt");
 						 std::stringstream stream;
 						 for (Usage u : MEMORY_USAGE) {
+							 stream << u << "\n";
+						 }
+						 file << stream.str();
+						 file.close();
+						 quit = true;
+					 }
+					 break;
+					 
+				 case SDLK_MINUS:
+					 if (e.type == SDL_KEYDOWN)
+					 {
+						 std::ofstream file;
+						 file.open(NAME + "_FunctionTrace.txt");
+						 std::stringstream stream;
+						 for (unsigned short u : FUNCTION_USAGE_AMT) {
 							 stream << u << "\n";
 						 }
 						 file << stream.str();
