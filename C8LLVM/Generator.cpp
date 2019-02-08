@@ -20,8 +20,18 @@ void Generator::OP_2NNN(){}; //"2NNN", "Push PC to Stack, PC = NNN", { 0x0FFF })
 void Generator::OP_3XNN(){}; //"3XNN", "If V[X] == NNN, skip next instruction", { 0x0F00, 0x00FF }); }
 void Generator::OP_4XNN(){}; //"4XNN", "If V[X] != NNN, skip next instruction", { 0x0F00, 0x00FF }); }
 void Generator::OP_5XY0(){}; //"5XY0", "If V[X] == V[Y], skip next instruction", { 0x0F00, 0x00F0 }); }
-void Generator::OP_6XNN(){}; //"6XNN", "V[X] = NN", { 0x0F00, 0x00FF }); }
-void Generator::OP_7XNN(){}; //"7XNN", "V[X] += NN", { 0x0F00, 0x00FF }); }
+void Generator::OP_6XNN(){
+	auto nn = llvm::ConstantInt::get(t->mainModule->getContext(), llvm::APInt(8, t->currentNode->operands[1]));
+	t->builder.CreateStore(nn, t->rX[t->currentNode->operands[0]/*X*/]);
+};
+void Generator::OP_7XNN(){
+	auto valX = t->builder.CreateLoad(t->builder.getInt8Ty(), t->rX[t->currentNode->operands[0]/*X*/]);
+	auto nn = llvm::ConstantInt::get(t->mainModule->getContext(), llvm::APInt(8, t->currentNode->operands[1]));
+
+	auto addXnNN = t->builder.CreateAdd(valX, nn); //NOTE: What happens in overflow?
+
+	t->builder.CreateStore(addXnNN, t->rX[t->currentNode->operands[0]/*X*/]);
+};
 
 void Generator::OP_8XY0(){
 	auto valY = t->builder.CreateLoad(t->builder.getInt8Ty(), t->rX[t->currentNode->operands[1]/*Y*/]);
