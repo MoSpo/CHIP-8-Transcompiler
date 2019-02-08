@@ -11,7 +11,7 @@ unsigned char MEMORY[4096]; //Dear God, there must be a better way than this :(
 
 Usage MEMORY_USAGE[4096];
 
-unsigned short FUNCTION_PC_HEADER[4096];
+unsigned short FUNCTION_PC_HEADER[8192];
 unsigned short FUNCTION_USAGE_AMT[4096];
 unsigned short FUNCTION_PCS[16];
 
@@ -65,7 +65,8 @@ int Init()
 	{
 		MEMORY[i] = 0;
 		MEMORY_USAGE[i] = Unused;
-		FUNCTION_PC_HEADER[i] = 0;
+		FUNCTION_PC_HEADER[2 * i] = 0;
+		FUNCTION_PC_HEADER[2 * i + 1] = 0;
 		FUNCTION_USAGE_AMT[i] = 0;
 	}
 	for (unsigned char i = 0; i < 16; ++i)

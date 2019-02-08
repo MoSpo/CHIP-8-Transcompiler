@@ -24,7 +24,7 @@ int OpenFile(int &argc, char *argv[])
 {
 	if (argc <= 1) //Checks if File was specified
 	{
-		return Error("No file");
+		//return Error("No file");
 	}
 
 
@@ -32,7 +32,10 @@ int OpenFile(int &argc, char *argv[])
 	else //If one was...
 	{
 		NAME = argv[1];
-		FILE *FILESTREAM = fopen(argv[1], "rb");	// Open in read binary
+		const char* Name = argv[1];
+		//NAME = "../Examples/BLINKY";
+		//const char* Name = "../Examples/BLINKY";
+		FILE *FILESTREAM = fopen(Name, "rb");	// Open in read binary
 		if (FILESTREAM)								// If successful...
 		{
 			fseek(FILESTREAM, 0, SEEK_END);				//Finding File Length: goes to the end, counts Bytes from origin and comes back

@@ -9,7 +9,7 @@ enum Usage { Unused, Data, Code, Both };
 
 extern Usage MEMORY_USAGE[4096];
 
-extern unsigned short FUNCTION_PC_HEADER[4096];
+extern unsigned short FUNCTION_PC_HEADER[8192];
 extern unsigned short FUNCTION_USAGE_AMT[4096];
 extern unsigned short FUNCTION_PCS[16];
 

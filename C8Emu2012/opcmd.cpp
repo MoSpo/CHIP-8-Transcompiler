@@ -232,6 +232,7 @@ bool OLD_KEYS[16];
 			}
 			else //OP_00EE //Return from a subroutine. Sets PC to the address at the (top of the stack)(?), then subtracts 1 from the stack pointer.
 			{
+				FUNCTION_PCS[SP] = 0;
 				--SP;
 				PC = STACK[SP];
 			}
@@ -380,11 +381,16 @@ bool OLD_KEYS[16];
 			PC += 2;
 
 			if (FUNCTION_PCS[SP] != 0) {
-				if (FUNCTION_PC_HEADER[PC] != FUNCTION_PCS[SP]) {
+				if (FUNCTION_PC_HEADER[2*PC] != FUNCTION_PCS[SP] && FUNCTION_PC_HEADER[2*PC + 1] != FUNCTION_PCS[SP] && FUNCTION_PC_HEADER[2 * PC + 2] != FUNCTION_PCS[SP] && FUNCTION_PC_HEADER[2 * PC + 3] != FUNCTION_PCS[SP]) {
+					for (int i = 0; i < 4; i++) {
+						if (FUNCTION_PC_HEADER[2 * PC + i] == 0) {
+							FUNCTION_PC_HEADER[2 * PC + i] = FUNCTION_PCS[SP];
+							break;
+						}
+					}
 					FUNCTION_USAGE_AMT[PC]++;
                     FUNCTION_USAGE_AMT[PC+1]++;
 				}
-				FUNCTION_PC_HEADER[PC] = FUNCTION_PCS[SP];
 			}
 
 			if (TIMER_DELAY > 0)
