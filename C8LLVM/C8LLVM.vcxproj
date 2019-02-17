@@ -79,6 +79,7 @@
       <AdditionalIncludeDirectories>C:\Users\shizz_000\Documents\LLVM\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/wd4146</AdditionalOptions>
       <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\Users\shizz_000\Documents\LLVM\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -104,6 +105,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\shizz_000\Documents\LLVM\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/wd4146</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -132,7 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ast.cpp" />
-    <ClCompile Include="Lexer.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="Tracker.cpp" />
     <ClCompile Include="Generator.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -141,7 +143,7 @@
     <ClInclude Include="Ast.h" />
     <ClInclude Include="Flags.h" />
     <ClInclude Include="Generator.h" />
-    <ClInclude Include="Lexer.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="Tracker.h" />
     <ClInclude Include="Lib.h" />
   </ItemGroup>

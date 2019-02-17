@@ -1,24 +1,5 @@
-/*#include "Tracker.h"
-#include "Generator.h"
-#include "main.h"
-
-int main(int argc, char**argv) {
-	Tracker t{};
-
-	//TheModule = makeLLVMModule();
-
-	//verifyModule(*Mod, PrintMessageAction);
-
-	//PassManager PM;
-	//PM.add(createPrintModulePass(&outs()));
-	//PM.run(*Mod);
-
-	delete Mod;
-	return 0;
-}*/
-
 #include "Lib.h"
-#include "Lexer.h"
+#include "Parser.h"
 #include "Generator.h"
 #include "Ast.h"
 #include "Flags.h"
@@ -66,27 +47,10 @@ int main(int argc, char *argv[]) {
 	if (OpenInputFile(argc, argv)) {
 		if (!ReadFlags(argc, argv)) return -1;
 
-		Lexer l{program, length};
-		Ast* entry = l.LexInput();
+		Parser l{program, length};
+		Ast* entry = l.SimpleParseInput();
 		Generator g{entry};
 		g.Generate();
-		/*std::ofstream file;
-		std::string str(argv[argc - 1]);
-		file.open(str + "asm");
-		int PC = 0;
-
-		word = (program[PC] << 8) | (program[PC + 1]);
-		file << OP_Lex();
-		PC += 2;
-		while (PC < length) {
-			file << "\n";
-			word = (program[PC] << 8) | (program[PC + 1]);
-			file << OP_Lex();
-			PC += 2;
-		}
-
-		file.close();*/
-
 	}
 	else return -1;
 	return 0;

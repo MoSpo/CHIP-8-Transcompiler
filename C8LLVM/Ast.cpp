@@ -11,6 +11,6 @@ Ast::Ast(unsigned short iID, std::string sID, std::vector<unsigned int> operandV
 
 
 Ast::~Ast() {
-	delete(next);
+	delete(nextInstruction);
 	//delete(operands);
 }

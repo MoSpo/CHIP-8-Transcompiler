@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iomanip>
 
-void Generator::OP_NULL(){};
+void Generator::OP_NULL(){}; //TODO: only load and store variables when needed, i.e. load when used and store all loaded for a function call
 
 void Generator::OP_0___(){
 	if (DEBUG && (opID & 0x00F0) == 0x00B0) { //OP_00BX
@@ -147,10 +147,10 @@ void Generator::OP_FX65(){}; //"FX65", "Put MEMORY @ VI into V0-[X]", { 0x0F00 }
 void Generator::OP_FX__(){ (this->*OP_Table_FX__[(opID & 0x00F0) >> 4])(); };
 
 void Generator::Generate(){
-	while (t->currentNode->next) {
+	while (t->currentNode->nextInstruction) {
 		opID = t->currentNode->instructionID;
 		(this->*OP_Table_F000[(opID & 0xF000) >> 12])();
-		t->currentNode = t->currentNode->next;
+		t->currentNode = t->currentNode->nextInstruction;
 	}
 	opID = t->currentNode->instructionID;
 	(this->*OP_Table_F000[(opID & 0xF000) >> 12])();
