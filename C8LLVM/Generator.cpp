@@ -235,7 +235,7 @@ void Generator::GenerateBlocks(std::vector<BasicBlock*> blocksToVisit) { //loop 
 			if (blockToGenerate->exitBlockLinks.size() > 0) {
 				builder.CreateBr(GetLLVMBlock(blockToGenerate->exitBlockLinks[0]));
 			} else {
-				builder.CreateRet(llvm::ConstantInt::get(t->mainModule->getContext(), llvm::APInt(32, 0x00)));
+				builder.CreateRet(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(32, 0x00)));
 			}
 		}
 		blockToGenerate->visitedByFunctionID = functionIndex; //set visited
@@ -264,7 +264,7 @@ Generator::Generator(std::vector<BasicBlock*> blocks) {
 			llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, "F_" + std::to_string(block->blockID), mainModule);
 			functions.push_back(f);
 			functionMap[block] = f;
-			if (block->blockID = 0) { //setup entry block if found
+			if (block->blockID == 0) { //setup entry block if found
 				blockMap[block] = llvm::BasicBlock::Create(context, std::to_string(block->blockID), f);
 			}
 		}
@@ -318,4 +318,5 @@ Generator::~Generator() {
 	delete(mainModule);
 	for (int i = 0; i < 16; i++) {
 		//delete(rX[i]); NOTE: can only delete variables allocated by new
+    }
 }

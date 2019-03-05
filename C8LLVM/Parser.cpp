@@ -85,6 +85,7 @@ Ast* Parser::OP_FX__() { return (this->*OP_Table_FX__[(word & 0x00F0) >> 4])(); 
 
 std::vector<unsigned short> Parser::BR_NULL(unsigned short Index) {
 	//THIS SHOULD NEVER BE CALLED!
+    return std::vector<unsigned short>{};
 }
 
 std::vector<unsigned short> Parser::BR_00EE(unsigned short Index) {
@@ -124,7 +125,7 @@ unsigned short Parser::FindDataPartition() {
 	unsigned int lowestBound = programLength;
 	while (PC < lowestBound) { //Loop for whole binary
 		word = (program[PC] << 8) | (program[PC + 1]);
-		if (word & 0xF000 == 0xA000) { //if ANNN
+		if ((word & 0xF000) == 0xA000) { //if ANNN
 			unsigned short bound = word & 0x0FFF;
 			if (bound < lowestBound) lowestBound = bound; //PC will never get into data as the correct bound will be found by the time you exit the code
 		}

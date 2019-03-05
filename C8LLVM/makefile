@@ -4,8 +4,8 @@ LDFLAGS=-g $(shell root-config --ldflags)
 LLVMFLAGS=$(shell /home/ls/Documents/Projects/llvm/llvm-7.0.1.src/build/bin/llvm-config --cxxflags --ldflags --system-libs --libs core)
 LDLIBS=$(shell root-config --libs)
 
-SRCS=Generator.cpp Lexer.cpp Ast.cpp Tracker.cpp Main.cpp
-HDRS= Generator.h Lexer.h Ast.h Lib.h Flags.h Tracker.h 
+SRCS=Generator.cpp Parser.cpp Ast.cpp Main.cpp
+HDRS= Generator.h Parser.h Ast.h Lib.h Flags.h 
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 C8LLVM: $(SRCS) $(HDRS)
