@@ -14,3 +14,12 @@ Ast::~Ast() {
 	delete(nextInstruction);
 	//delete(operands);
 }
+
+void BasicBlock::MergeIntoBlock(BasicBlock * blockToMerge) {
+}
+
+BasicBlock::BasicBlock() {
+}
+
+BasicBlock::~BasicBlock() {
+}

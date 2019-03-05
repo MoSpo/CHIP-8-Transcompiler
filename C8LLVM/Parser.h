@@ -86,7 +86,7 @@ private:
 
 public:
 
-	Ast* ParseInput();
+	std::vector<BasicBlock*> ParseInput();
 	Ast* SimpleParseInput();
 
 	Parser(unsigned char p[], unsigned int l);

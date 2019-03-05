@@ -1,12 +1,9 @@
-#include "Tracker.h"
 #include "Ast.h"
 #ifndef GENERATOR_H
 #define GENERATOR_H
 class Generator {
 
 private:
-	Tracker* t; //TODO: Remove Tracker and merge
-
 	void OP_NULL();
 
 	void OP_0___(); //"00BX" print V[X] (Debug only), {0x000F}); "00E0", "Clear the display", {}); "00EE", "Return from subroutine", {});
@@ -59,11 +56,45 @@ private:
 
 	void (Generator::*OP_Table_F000[16])(){ &Generator::OP_0___, &Generator::OP_1NNN, &Generator::OP_2NNN, &Generator::OP_3XNN, &Generator::OP_4XNN, &Generator::OP_5XY0, &Generator::OP_6XNN, &Generator::OP_7XNN, &Generator::OP_8XY_, &Generator::OP_9XY0, &Generator::OP_ANNN, &Generator::OP_BNNN, &Generator::OP_CXNN, &Generator::OP_DXYN, &Generator::OP_EX__, &Generator::OP_FX__ };
 
+	Ast* treeEntry; //NOTE: only used for legacy
+	Ast* currentNode;
+
+	llvm::LLVMContext context;
+	llvm::IRBuilder<> builder{ context };
+	llvm::Module* mainModule;
+
+	llvm::GlobalVariable* rX[16];
+
+	llvm::GlobalVariable* rI;
+
+	std::vector<llvm::Function*> functions;
+	unsigned short functionIndex;
+
+	std::map<BasicBlock*, llvm::Function*> functionMap;
+	std::map<BasicBlock*, llvm::BasicBlock*> blockMap;
+
+	//std::vector<BasicBlock*> basicBlocks;
+	std::vector<BasicBlock*> entryBlocks;
+
+	llvm::Function* putchar;
+	llvm::Function* mainFunction;
+
+	BasicBlock* currentBlock;
+
+	//errorlist
+	llvm::BasicBlock* GetLLVMBlock(BasicBlock* block);
+	void InitialiseRegisters();
+	llvm::GlobalVariable* BuildRegister(llvm::Type *const &size, std::string name);
+
+	void GenerateBlocks(std::vector<BasicBlock*> blocksToVisit);
+
 public:
 	unsigned short opID;
 	void Generate(); //Call to parse AST and generate code
+	void SimpleGenerate(); //Call to parse AST and generate code
 
 	Generator(Ast* e);
+	Generator(std::vector<BasicBlock*>);
 	~Generator();
 };
 #endif
