@@ -126,11 +126,25 @@ unsigned short Parser::FindDataPartition() {
 		word = (program[PC] << 8) | (program[PC + 1]);
 		if ((word & 0xF000) == 0xA000) { //if ANNN
 			unsigned short bound = word & 0x0FFF;
-			if (bound < lowestBound) lowestBound = bound; //PC will never get into data as the correct bound will be found by the time you exit the code
-		}
+			if (bound - 512 < lowestBound) lowestBound = bound - 512; //PC will never get into data as the correct bound will be found by the time you exit the code
+		} //also need to subtract the 512 as ANNN addresses will be relative to the interpreter gap
 		PC += 2;
 	}
 	return lowestBound;
+}
+
+std::vector<unsigned char> Parser::GetData(unsigned short dataPartition) {
+	unsigned int PC = dataPartition;
+	std::vector<unsigned char> data;
+	while (PC < programLength) { //Loop on data
+		data.push_back(program[PC]);
+		PC++;
+	}
+	/*while (PC < 4096) { //Add memory padding
+		data.push_back(0);
+		PC++;
+	}*/
+	return data;
 }
 
 std::map<unsigned short, BasicBlock*> Parser::CreateBlocks(unsigned short dataPartition) {
@@ -252,10 +266,12 @@ std::vector<BasicBlock*> Parser::FillBlocks(std::map<unsigned short, BasicBlock*
 	return blocks;
 }
 
-std::vector<BasicBlock*> Parser::ParseInput() {
-	unsigned short p = FindDataPartition();
-	//return FillBlocks(LinkBlocks(CreateBlocks(p)), p);
-	return FillBlocks(CreateBlocks(p), p);
+std::vector<BasicBlock*> Parser::ParseCode(unsigned short dataPartition) {
+	return FillBlocks(CreateBlocks(dataPartition), dataPartition);
+}
+
+std::vector<unsigned char> Parser::ParseData(unsigned short dataPartition) {
+	return GetData(dataPartition);
 }
 
 Ast* Parser::SimpleParseInput() {
@@ -271,10 +287,6 @@ Ast* Parser::SimpleParseInput() {
 		PC += 2;
 	}
 	return Entry;
-}
-
-unsigned short Parser::MemoryToBinaryAddress(unsigned short memoryAdr) { //NOTE: NOT USED YET
-	return (memoryAdr - 512) /2;
 }
 
 Parser::Parser(unsigned char p[], unsigned int l) {

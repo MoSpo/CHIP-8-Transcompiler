@@ -48,7 +48,8 @@ int main(int argc, char *argv[]) {
 		if (!ReadFlags(argc, argv)) return -1;
 
 		Parser p{program, length};
-		Generator g{p.ParseInput()};
+		unsigned short prtn = p.FindDataPartition();
+		Generator g{p.ParseCode(prtn), p.ParseData(prtn), prtn};
 		g.Generate();
 
 		/*Parser l{program, length};

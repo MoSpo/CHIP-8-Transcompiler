@@ -47,7 +47,7 @@ private:
 	void OP_FX1_();
 
 	void OP_FX29(); //"FX29", "VI = FONT @ V[X]", { 0x0F00 }); }
-	void OP_FX33(); //"FX33", "VI = BCD(V[X])", { 0x0F00 }); }
+	void OP_FX33(); //"FX33", "Put BCD(V[X]) into MEMORY @ VI", { 0x0F00 }); }
 	void OP_FX55(); //"FX55", "Put V0-[X] into MEMORY @ VI", { 0x0F00 }); }
 	void OP_FX65(); //"FX65", "Put MEMORY @ VI into V0-[X]", { 0x0F00 }); }
 
@@ -67,8 +67,14 @@ private:
 
 	llvm::GlobalVariable* rI;
 
+	llvm::GlobalVariable* Memory;
+	llvm::GlobalVariable* Fonts;
+	llvm::GlobalVariable* useFont;
+
+
 	std::vector<llvm::Function*> functions;
 	unsigned short functionIndex;
+	unsigned short functionCallIndex;
 
 	std::map<BasicBlock*, llvm::Function*> functionMap;
 	std::map<BasicBlock*, llvm::BasicBlock*> blockMap;
@@ -83,10 +89,15 @@ private:
 
 	//errorlist
 	llvm::BasicBlock* GetLLVMBlock(BasicBlock* block);
+	unsigned short MemoryToBinaryAddress(unsigned short memoryAdr);
+
+	void InitialiseMemory(std::vector<unsigned char> data);
 	void InitialiseRegisters();
-	llvm::GlobalVariable* BuildRegister(llvm::Type *const &size, std::string name);
+	llvm::GlobalVariable* BuildRegister(llvm::Type *const &type, unsigned char size, std::string name);
 
 	void GenerateBlocks(std::vector<BasicBlock*> blocksToVisit);
+
+	unsigned short codeLength;
 
 public:
 	unsigned short opID;
@@ -94,7 +105,7 @@ public:
 	void SimpleGenerate(); //Call to parse AST and generate code
 
 	Generator(Ast* e);
-	Generator(std::vector<BasicBlock*>);
+	Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> data, unsigned char dataPartition);
 	~Generator();
 };
 #endif
