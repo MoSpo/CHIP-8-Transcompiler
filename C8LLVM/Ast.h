@@ -25,7 +25,7 @@ public:
 	std::vector<BasicBlock*> exitBlockLinks;
 	Ast* code;
 	void MergeIntoBlock(BasicBlock* blockToMerge); //simplify 2 blocks
-	BasicBlock();
+	BasicBlock(unsigned short ID);
 	~BasicBlock();
 };
 #endif

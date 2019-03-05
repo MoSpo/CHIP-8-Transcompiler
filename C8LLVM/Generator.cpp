@@ -273,7 +273,7 @@ Generator::Generator(std::vector<BasicBlock*> blocks) {
 
 llvm::BasicBlock* Generator::GetLLVMBlock(BasicBlock* block) {
 	if (blockMap.find(block) == blockMap.end()) { //if llvmbasicblock not made
-		llvm::BasicBlock* b = llvm::BasicBlock::Create(context, std::to_string(block->blockID), functions[functionIndex]);
+		llvm::BasicBlock* b = llvm::BasicBlock::Create(context, std::to_string(block->blockID), functions[functionIndex-1]);
 		blockMap[block] = b;
 		return b;
 	} else {

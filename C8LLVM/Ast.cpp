@@ -18,7 +18,9 @@ Ast::~Ast() {
 void BasicBlock::MergeIntoBlock(BasicBlock * blockToMerge) {
 }
 
-BasicBlock::BasicBlock() {
+BasicBlock::BasicBlock(unsigned short ID) {
+	blockID = ID;
+	hasExplicitBranch = false;
 }
 
 BasicBlock::~BasicBlock() {

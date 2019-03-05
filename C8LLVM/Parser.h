@@ -81,7 +81,6 @@ private:
 
 	unsigned short word;
 	unsigned char* program;
-	bool isFunction;
 	unsigned int programLength;
 
 public:

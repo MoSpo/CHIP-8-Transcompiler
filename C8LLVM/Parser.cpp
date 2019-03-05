@@ -102,7 +102,6 @@ std::vector<unsigned short> Parser::BR_1NNN(unsigned short Index) {
 
 std::vector<unsigned short> Parser::BR_2NNN(unsigned short Index) {
 	unsigned short lcall= word & 0x0FFF;
-	isFunction = true;
 	return std::vector<unsigned short>{lcall};
 }
 
@@ -138,8 +137,7 @@ std::map<unsigned short, BasicBlock*> Parser::CreateBlocks(unsigned short dataPa
 	unsigned int PC = 0;
 
 	std::map<unsigned short, BasicBlock*> blocks;
-	BasicBlock* mainEntryBlock = new BasicBlock{};
-	mainEntryBlock->blockID = 0;
+	BasicBlock* mainEntryBlock = new BasicBlock{0};
 	mainEntryBlock->isFunctionBlock = true;
 	blocks[0] = mainEntryBlock;
 
@@ -148,17 +146,12 @@ std::map<unsigned short, BasicBlock*> Parser::CreateBlocks(unsigned short dataPa
 		std::vector<unsigned short> blockAddresses = (this->*BR_Table_F000[(word & 0xF000) >> 12])(PC);
 		for (unsigned short adr : blockAddresses) {
 			if (blocks.find(adr) == blocks.end()) {
-				BasicBlock* b = new BasicBlock{};
-				b->blockID = adr;
-				//b->entryAddresses.push_back(PC);
-				if (isFunction) b->isFunctionBlock = true;
+				BasicBlock* b = new BasicBlock{ adr };
+				b->isFunctionBlock = (word & 0xF000) == 0x2000;
 				blocks[adr] = b;
-			} else {
-				//blocks[adr]->entryAddresses.push_back(PC);
 			}
 		}
 		PC += 2;
-		isFunction = false;
 	}
 
 	return blocks;
@@ -214,8 +207,7 @@ std::vector<BasicBlock*> Parser::FillBlocks(std::map<unsigned short, BasicBlock*
 		blockAddresses.push_back(blockMap.first);
 		blocks.push_back(blockMap.second);
 	}
-	blockAddresses.push_back(dataPartition +2); //just so blockIndex+1 doesnt overflow
-	
+
 	Ast* Current;
 	unsigned int PC = 0;
 	unsigned short prevWord;
@@ -235,13 +227,13 @@ std::vector<BasicBlock*> Parser::FillBlocks(std::map<unsigned short, BasicBlock*
 					blocks[blockIndex - 1]->functionBlockLinks.push_back(emptyBlocks[prevWord & 0xFFF]);
 				} else if (hi == 0xB000) { //indirect
 					//TODO: later
-				} else if (hi == 0x3000 || hi == 0x4000 || hi == 0x5000 || 0x9000 || 0xE000) { //if
+				} else if (hi == 0x3000 || hi == 0x4000 || hi == 0x5000 || hi == 0x9000 || hi ==  0xE000) { //if
 					blocks[blockIndex - 1]->exitBlockLinks.clear();
 					blocks[blockIndex - 1]->exitBlockLinks.push_back(emptyBlocks[PC]);
 					blocks[blockIndex - 1]->exitBlockLinks.push_back(emptyBlocks[PC+2]);
 					blocks[blockIndex - 1]->hasExplicitBranch = true;
 					if(!emptyBlocks[PC]->hasExplicitBranch) emptyBlocks[PC]->exitBlockLinks.push_back(emptyBlocks[PC+2]);
-				}	if (prevWord == 0x00EE) { //ret
+				} else if (prevWord == 0x00EE) { //ret
 					blocks[blockIndex - 1]->exitBlockLinks.clear();
 					blocks[blockIndex - 1]->hasExplicitBranch = true;
 				}
