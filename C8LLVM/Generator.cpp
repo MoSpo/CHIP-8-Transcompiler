@@ -255,8 +255,9 @@ void Generator::OP_DXYN(){
 	//innerloop
 	builder.SetInsertPoint(innerloop);
 
-	llvm::PHINode* j = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 1);
+	llvm::PHINode* j = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 2);
 	j->addIncoming(vj_a, outerloop);
+	j->addIncoming(j, innerloop);
 
 	llvm::PHINode* i = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 2);
 	i->addIncoming(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 0)), outerloop);
@@ -389,7 +390,16 @@ void Generator::SimpleGenerate(){
 void Generator::Generate() {
 	functionIndex = 1;
 	for (BasicBlock* block : entryBlocks) {
-		
+		if (block->blockID == 0) { //adds the entry blocks, so we don't run into the problem of the entry blocks having predecessors! 
+			llvm::BasicBlock* entry = llvm::BasicBlock::Create(context, "entry", functionMap[block]);
+			builder.SetInsertPoint(entry);
+			builder.CreateCall(IOInit);
+			builder.CreateBr(GetLLVMBlock(block));
+		} else {
+			llvm::BasicBlock* entry = llvm::BasicBlock::Create(context, functionIndex + "_entry", functionMap[block]);
+			builder.SetInsertPoint(entry);
+			builder.CreateBr(GetLLVMBlock(block));
+		}
 		GenerateBlocks(std::vector<BasicBlock*>{block});
 		blockMap.clear();
 		functionIndex++;
@@ -476,8 +486,6 @@ Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> d
 			functionMap[block] = f;
 			if (block->blockID == 0) { //setup entry block if found
 				blockMap[block] = llvm::BasicBlock::Create(context, std::to_string(block->blockID), f);
-				builder.SetInsertPoint(blockMap[block]);
-				builder.CreateCall(IOInit);
 			}
 		}
 	}
