@@ -82,7 +82,14 @@ private:
 	//std::vector<BasicBlock*> basicBlocks;
 	std::vector<BasicBlock*> entryBlocks;
 
+	llvm::Function* IOInit;
+	llvm::Function* IOLoop;
+
+	llvm::Function* getRand;
+	llvm::Function* setPixel;
+
 	llvm::Function* putchar;
+
 	llvm::Function* mainFunction;
 
 	BasicBlock* currentBlock;
@@ -105,7 +112,7 @@ public:
 	void SimpleGenerate(); //Call to parse AST and generate code
 
 	Generator(Ast* e);
-	Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> data, unsigned char dataPartition);
+	Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> data, unsigned short dataPartition);
 	~Generator();
 };
 #endif

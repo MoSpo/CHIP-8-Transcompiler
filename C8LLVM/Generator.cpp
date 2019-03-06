@@ -193,8 +193,115 @@ void Generator::OP_ANNN(){
 
 void Generator::OP_BNNN(){}; //"BNNN", Indirect Jump TODO: much later
 
-void Generator::OP_CXNN(){}; //"CXNN", "V[X] = RAND(range:00-FF) & NN", { 0x0F00, 0x00FF }); }
-void Generator::OP_DXYN(){}; //"DXYN", "Draw to screen", { 0x0F00, 0x00F0, 0x000F }); }
+void Generator::OP_CXNN(){
+	auto rand = builder.CreateCall(getRand);
+	auto andRand = builder.CreateAnd(rand, llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, currentNode->operands[1])));
+	builder.CreateStore(andRand, rX[currentNode->operands[0]/*X*/]);
+};
+
+void Generator::OP_DXYN(){
+	/*entry:
+	 br label %outerloop
+  
+	outerloop: ; preds = %afterloop, %entry
+	  %var = phi i8 [ nextj, %afterloop ], [  0, %entry ]
+	  br label %innerloop
+
+	innerloop: ; preds = %outerloop, %innerloop
+
+	  %j = phi i8 [ var, %outerloop ]
+	  %i = phi i8 [ nexti, %innerloop ], [  0, %outerloop ]
+
+	  ; body
+	  bit = ((MEMORY[REG_VI + j] & (128 >> i)) >> (7 - i));
+	  x = (REG_V[(WORD & 0x0F00) >> 8] + i) % 64;
+	  y = (REG_V[(WORD & 0x00F0) >> 4] + j) % 32;
+	  %calltmp = call double @setpixel(x,y,bit)
+	  R[F] = calltmp
+  
+	  ; increment
+	  %nexti = fadd i8 %i, 1
+
+	  ; termination test //i == 8
+	  %cmpi = fcmpeq i8 %i, 8
+	  br i1 %cmpi, label %innerloop, label %afterloop
+
+	afterloop: ; preds = %innerloop
+	  ; increment
+	  %varj = phi i8 [ j, %innerloop ]
+	  %nextj = fadd i8 %varj, 1
+
+	  ; termination test //i == n
+	  %cmpj = fcmp ult i8 %i, %n
+	  br i1 %cmpj, label %outerloop, label %exit
+
+	exit: ; preds = %afterloop
+	*/
+	llvm::BasicBlock* outerloop = llvm::BasicBlock::Create(context, std::to_string(currentBlock->blockID) + "_ol", functions[functionIndex - 1]);
+	llvm::BasicBlock* innerloop = llvm::BasicBlock::Create(context, std::to_string(currentBlock->blockID) + "_il", functions[functionIndex - 1]);
+	llvm::BasicBlock* afterloop = llvm::BasicBlock::Create(context, std::to_string(currentBlock->blockID) + "_al", functions[functionIndex - 1]);
+	llvm::BasicBlock* exit = llvm::BasicBlock::Create(context, std::to_string(currentBlock->blockID) + "_b", functions[functionIndex - 1]);
+
+	auto one = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 1));
+	builder.CreateBr(outerloop);
+	//outerloop
+	builder.SetInsertPoint(outerloop);
+
+	llvm::PHINode* vj_a = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 2);
+	vj_a->addIncoming(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 0)), GetLLVMBlock(currentBlock));
+
+	builder.CreateBr(innerloop);
+	//innerloop
+	builder.SetInsertPoint(innerloop);
+
+	llvm::PHINode* j = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 1);
+	j->addIncoming(vj_a, outerloop);
+
+	llvm::PHINode* i = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 2);
+	i->addIncoming(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 0)), outerloop);
+
+	auto valX = builder.CreateLoad(builder.getInt8Ty(), rX[currentNode->operands[0]/*X*/]);
+	auto valY = builder.CreateLoad(builder.getInt8Ty(), rX[currentNode->operands[1]/*Y*/]);
+	auto valXaddi = builder.CreateAdd(i, valX); //NOTE: Could overflow here
+	auto valYaddj = builder.CreateAdd(j, valY);
+	auto Ximod = builder.CreateURem(valXaddi, llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 64)));
+	auto Yjmod = builder.CreateURem(valYaddj, llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 32)));
+
+	//TODO: NEED TO ADD FONT CHECK HERE
+	auto valI = builder.CreateLoad(builder.getInt8Ty(), rI);
+	auto valIaddj = builder.CreateAdd(i, valI); //NOTE: Can't overflow here
+	auto SpriteGEP = builder.CreateGEP(Memory, valIaddj);
+
+	auto lShr128 = builder.CreateLShr(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 128)), i);
+	auto min7i = builder.CreateSub(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 7)), i);
+	auto Sprand128 = builder.CreateAnd(SpriteGEP, lShr128);
+
+	auto lShr7i = builder.CreateLShr(Sprand128, min7i);
+
+	std::vector<llvm::Value *> args{Ximod, Yjmod, lShr7i};
+	auto ret = builder.CreateCall(setPixel, args);
+	builder.CreateStore(ret, rX[15]);
+
+	auto nexti = builder.CreateAdd(i, one);
+	i->addIncoming(nexti, innerloop);
+
+	auto eqeight = builder.CreateICmpEQ(nexti, llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 8)));
+	builder.CreateCondBr(eqeight, afterloop, innerloop);
+	//afterloop
+	builder.SetInsertPoint(afterloop);
+
+	llvm::PHINode* vj_b = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 1);
+	vj_b->addIncoming(j, innerloop);
+
+	auto nextj = builder.CreateAdd(vj_b, one);
+	vj_a->addIncoming(nextj, afterloop);
+
+	auto eqn = builder.CreateICmpEQ(nextj, llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, currentNode->operands[2])));
+	builder.CreateCondBr(eqn, exit, outerloop);
+	//exit
+	builder.SetInsertPoint(exit);
+	blockMap[currentBlock] = exit;
+}; //"DXYN", "Draw to screen", { 0x0F00, 0x00F0, 0x000F }); }
 
 void Generator::OP_EX__(){}; // "EXA1", "If KEY[V[X]] not pressed, skip next instruction", { 0x0F00 }); ("EX9E", "If KEY[V[X]] not pressed, skip next instruction", { 0x0F00 });
 
@@ -294,10 +401,12 @@ void Generator::GenerateBlocks(std::vector<BasicBlock*> blocksToVisit) { //loop 
 		functionCallIndex = 0;
 		currentNode = blockToGenerate->code;
 		while (currentNode->nextInstruction) {
+			builder.CreateCall(IOLoop); //LOOPS
 			opID = currentNode->instructionID;
 			(this->*OP_Table_F000[(opID & 0xF000) >> 12])();
 			currentNode = currentNode->nextInstruction;
 		}
+		builder.CreateCall(IOLoop); //LOOPS
 		opID = currentNode->instructionID; //for final instruction
 		(this->*OP_Table_F000[(opID & 0xF000) >> 12])();
 
@@ -314,7 +423,7 @@ void Generator::GenerateBlocks(std::vector<BasicBlock*> blocksToVisit) { //loop 
 	GenerateBlocks(blocksToVisit);
 };
 
-Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> data, unsigned char dataPartition) {
+Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> data, unsigned short dataPartition) {
 	mainModule = new llvm::Module("program", context);
 	//basicBlocks = blocks;
 
@@ -323,11 +432,25 @@ Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> d
 	InitialiseMemory(data);
 
 	if (DEBUG) { //Add putchar
-		std::vector<llvm::Type *> args{ 1, llvm::Type::getInt32Ty(context) };
 		llvm::FunctionType *putCharFt = llvm::FunctionType::get(llvm::Type::getInt32Ty(context), llvm::Type::getInt32Ty(context), false);
 		llvm::Function *putCharF = llvm::Function::Create(putCharFt, llvm::Function::ExternalLinkage, "putchar", mainModule);
 		putchar = putCharF;
 	}
+
+	llvm::FunctionType *IOFt = llvm::FunctionType::get(llvm::Type::getVoidTy(context), false);
+	llvm::Function *IOInitF = llvm::Function::Create(IOFt, llvm::Function::ExternalLinkage, "IOInit", mainModule);
+	IOInit = IOInitF;
+	llvm::Function *IOLoopF = llvm::Function::Create(IOFt, llvm::Function::ExternalLinkage, "IOLoop", mainModule);
+	IOLoop = IOLoopF;
+
+	llvm::FunctionType *getRandFt = llvm::FunctionType::get(llvm::Type::getInt8Ty(context), false);
+	llvm::Function *getRandF = llvm::Function::Create(getRandFt, llvm::Function::ExternalLinkage, "GetRand", mainModule);
+	getRand = getRandF;
+
+	std::vector<llvm::Type *> pixArgs{ llvm::Type::getInt8Ty(context), llvm::Type::getInt8Ty(context), llvm::Type::getInt8Ty(context) };
+	llvm::FunctionType *setPixelFt = llvm::FunctionType::get(llvm::Type::getInt8Ty(context), pixArgs, false);
+	llvm::Function *setPixelF = llvm::Function::Create(setPixelFt, llvm::Function::ExternalLinkage, "SetPixel", mainModule);
+	setPixel = setPixelF;
 
 	llvm::FunctionType *ft = llvm::FunctionType::get(llvm::Type::getInt32Ty(context), false);
 
@@ -339,6 +462,8 @@ Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> d
 			functionMap[block] = f;
 			if (block->blockID == 0) { //setup entry block if found
 				blockMap[block] = llvm::BasicBlock::Create(context, std::to_string(block->blockID), f);
+				builder.SetInsertPoint(blockMap[block]);
+				builder.CreateCall(IOInit);
 			}
 		}
 	}
@@ -392,7 +517,7 @@ void Generator::InitialiseMemory(std::vector<unsigned char> data) {
 		llvm::Constant* c = llvm::Constant::getIntegerValue(builder.getInt8Ty(), llvm::APInt(8, d));
 		memValues.push_back(c);
 	}
-	Memory->setInitializer(llvm::ConstantDataArray::get(mainModule->getContext(), memValues));
+	Memory->setInitializer(llvm::ConstantArray::get(llvm::ArrayType::get(builder.getInt8Ty(), data.size()), memValues));
 
 	unsigned char Fontset[80] =
 	{
@@ -424,7 +549,7 @@ void Generator::InitialiseMemory(std::vector<unsigned char> data) {
 		llvm::Constant* c = llvm::Constant::getIntegerValue(builder.getInt8Ty(), llvm::APInt(8, f));
 		fontValues.push_back(c);
 	}
-	Fonts->setInitializer(llvm::ConstantDataArray::get(mainModule->getContext(), fontValues));
+	Fonts->setInitializer(llvm::ConstantArray::get(llvm::ArrayType::get(builder.getInt8Ty(), data.size()), memValues));
 
 	useFont = BuildRegister(builder.getInt1Ty(), 1, "useFont");
 }
