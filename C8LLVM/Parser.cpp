@@ -235,10 +235,10 @@ std::vector<BasicBlock*> Parser::FillBlocks(std::map<unsigned short, BasicBlock*
 				unsigned short hi = prevWord & 0xF000;
 				if (hi == 0x1000) { //jump
 					blocks[blockIndex - 1]->exitBlockLinks.clear();
-					blocks[blockIndex - 1]->exitBlockLinks.push_back(emptyBlocks[prevWord & 0xFFF]);
+					blocks[blockIndex - 1]->exitBlockLinks.push_back(emptyBlocks[prevWord & 0xFFF - 512]);
 					blocks[blockIndex - 1]->hasExplicitBranch = true;
 				} else if (hi == 0x2000) { //call
-					blocks[blockIndex - 1]->functionBlockLinks.push_back(emptyBlocks[prevWord & 0xFFF]);
+					blocks[blockIndex - 1]->functionBlockLinks.push_back(emptyBlocks[prevWord & 0xFFF - 512]);
 				} else if (hi == 0xB000) { //indirect
 					//TODO: later
 				} else if (hi == 0x3000 || hi == 0x4000 || hi == 0x5000 || hi == 0x9000 || hi ==  0xE000) { //if
@@ -263,6 +263,21 @@ std::vector<BasicBlock*> Parser::FillBlocks(std::map<unsigned short, BasicBlock*
 		}
 		prevWord = word;
 	}
+
+	unsigned short hi = prevWord & 0xF000;
+	if (hi == 0x1000) { //jump
+		blocks[blockIndex - 1]->exitBlockLinks.clear();
+		blocks[blockIndex - 1]->exitBlockLinks.push_back(emptyBlocks[prevWord & 0xFFF - 512]);
+		blocks[blockIndex - 1]->hasExplicitBranch = true;
+	}
+	else if (hi == 0x2000) { //call
+		blocks[blockIndex - 1]->functionBlockLinks.push_back(emptyBlocks[prevWord & 0xFFF - 512]);
+	}
+	else if (prevWord == 0x00EE) { //ret
+		blocks[blockIndex - 1]->exitBlockLinks.clear();
+		blocks[blockIndex - 1]->hasExplicitBranch = true;
+	}
+
 	return blocks;
 }
 
