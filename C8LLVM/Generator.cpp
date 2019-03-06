@@ -457,7 +457,13 @@ Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> d
 	for (BasicBlock* block : code) {
 		if (block->isFunctionBlock) { //find function blocks
 			entryBlocks.push_back(block);
-			llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, "F_" + std::to_string(block->blockID), mainModule);
+            std::string name;
+            if (block->blockID == 0) {
+                name = "main";
+            } else {
+                name = "F_" + std::to_string(block->blockID);
+            }
+			llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, name, mainModule);
 			functions.push_back(f);
 			functionMap[block] = f;
 			if (block->blockID == 0) { //setup entry block if found
@@ -549,7 +555,7 @@ void Generator::InitialiseMemory(std::vector<unsigned char> data) {
 		llvm::Constant* c = llvm::Constant::getIntegerValue(builder.getInt8Ty(), llvm::APInt(8, f));
 		fontValues.push_back(c);
 	}
-	Fonts->setInitializer(llvm::ConstantArray::get(llvm::ArrayType::get(builder.getInt8Ty(), data.size()), memValues));
+	Fonts->setInitializer(llvm::ConstantArray::get(llvm::ArrayType::get(builder.getInt8Ty(), 80), fontValues));
 
 	useFont = BuildRegister(builder.getInt1Ty(), 1, "useFont");
 }
