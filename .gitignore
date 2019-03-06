@@ -11,6 +11,7 @@
 *.userprefs
 
 # Build results
+Generations/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

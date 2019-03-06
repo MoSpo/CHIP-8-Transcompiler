@@ -187,8 +187,8 @@ void Generator::OP_ANNN(){
 	auto nnn = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(16, currentNode->operands[1] - 512 - codeLength)); //so that we can use this to read propery into our array - we also don't need the exact value of rI, so can do this
 	builder.CreateStore(nnn, rI);
 
-	auto flagSet = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(1, 0));
-	builder.CreateStore(useFont, flagSet); //uses main memory
+	//auto flagSet = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(1, 0));
+	//builder.CreateStore(useFont, flagSet); //uses main memory
 };
 
 void Generator::OP_BNNN(){}; //"BNNN", Indirect Jump TODO: much later
@@ -237,6 +237,7 @@ void Generator::OP_DXYN(){
 
 	exit: ; preds = %afterloop
 	*/
+    
 	llvm::BasicBlock* outerloop = llvm::BasicBlock::Create(context, std::to_string(currentBlock->blockID) + "_ol", functions[functionIndex - 1]);
 	llvm::BasicBlock* innerloop = llvm::BasicBlock::Create(context, std::to_string(currentBlock->blockID) + "_il", functions[functionIndex - 1]);
 	llvm::BasicBlock* afterloop = llvm::BasicBlock::Create(context, std::to_string(currentBlock->blockID) + "_al", functions[functionIndex - 1]);
@@ -260,21 +261,28 @@ void Generator::OP_DXYN(){
 	llvm::PHINode* i = builder.CreatePHI(llvm::Type::getInt8Ty(mainModule->getContext()), 2);
 	i->addIncoming(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 0)), outerloop);
 
-	auto valX = builder.CreateLoad(builder.getInt8Ty(), rX[currentNode->operands[0]/*X*/]);
-	auto valY = builder.CreateLoad(builder.getInt8Ty(), rX[currentNode->operands[1]/*Y*/]);
+	auto valX = builder.CreateLoad(builder.getInt8Ty(), rX[currentNode->operands[0]]);
+	auto valY = builder.CreateLoad(builder.getInt8Ty(), rX[currentNode->operands[1]]);
 	auto valXaddi = builder.CreateAdd(i, valX); //NOTE: Could overflow here
 	auto valYaddj = builder.CreateAdd(j, valY);
 	auto Ximod = builder.CreateURem(valXaddi, llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 64)));
 	auto Yjmod = builder.CreateURem(valYaddj, llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 32)));
 
 	//TODO: NEED TO ADD FONT CHECK HERE
-	auto valI = builder.CreateLoad(builder.getInt8Ty(), rI);
-	auto valIaddj = builder.CreateAdd(i, valI); //NOTE: Can't overflow here
-	auto SpriteGEP = builder.CreateGEP(Memory, valIaddj);
+	auto valI = builder.CreateLoad(builder.getInt16Ty(), rI);
+    auto zExtj16 = builder.CreateZExt(j, builder.getInt16Ty());
+	auto valIaddj = builder.CreateAdd(zExtj16, valI); //NOTE: Can't overflow here
+    
+    std::vector<llvm::Value *> gepVect;
+    gepVect.push_back(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(16, 0)));
+    gepVect.push_back(valIaddj);
+	auto SpriteGEP = builder.CreateGEP(Memory, llvm::ArrayRef<llvm::Value *>(gepVect));
 
 	auto lShr128 = builder.CreateLShr(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 128)), i);
 	auto min7i = builder.CreateSub(llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(8, 7)), i);
-	auto Sprand128 = builder.CreateAnd(SpriteGEP, lShr128);
+    //SpriteGEP->getType()->print(llvm::outs());
+    auto SprVal = builder.CreateLoad(builder.getInt8Ty(), SpriteGEP);
+	auto Sprand128 = builder.CreateAnd(SprVal, lShr128);
 
 	auto lShr7i = builder.CreateLShr(Sprand128, min7i);
 
@@ -319,7 +327,7 @@ void Generator::OP_FX1E(){
 	auto addXnI32 = builder.CreateAdd(zExtX32, zExtI32); //add zero extended registers together
 
 	auto byte = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(32, 65535));
-	auto oflw = builder.CreateICmpUGT(addXnI32, byte); //check if 16bit add is over 0xFF
+	auto oflw = builder.CreateICmpUGT(addXnI32, byte); //check if is over 0xFFFF
 	auto zExtOflw = builder.CreateZExt(oflw, builder.getInt8Ty());
 	builder.CreateStore(zExtOflw, rX[15/*F*/]); //convert i1 bool to i8 and store it as overflow flag
 	auto addXnI = builder.CreateTrunc(addXnI32, builder.getInt16Ty());
@@ -339,8 +347,8 @@ void Generator::OP_FX29(){
 	//auto font = builder.CreateGEP(Fonts, valX); //gets the pointer for the value inside the array(?)
 	builder.CreateStore(mult, rI);
 
-	auto flagSet = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(1, 1));
-	builder.CreateStore(useFont, flagSet); //uses font memory
+	//auto flagSet = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(1, 1));
+	//builder.CreateStore(useFont, flagSet); //uses font memory
 };
 void Generator::OP_FX33(){
 
@@ -515,8 +523,8 @@ void Generator::InitialiseRegisters() {
 void Generator::InitialiseMemory(std::vector<unsigned char> data) {
 	mainModule->getOrInsertGlobal("Memory", llvm::ArrayType::get(builder.getInt8Ty(), data.size()));
 	Memory = mainModule->getNamedGlobal("Memory");
-	Memory->setLinkage(llvm::GlobalValue::CommonLinkage);
-	Memory->setAlignment(1);
+	Memory->setLinkage(llvm::GlobalValue::PrivateLinkage);
+	Memory->setAlignment(16);
 
 	std::vector<llvm::Constant*> memValues;
 	for(unsigned char d : data) {
@@ -547,8 +555,8 @@ void Generator::InitialiseMemory(std::vector<unsigned char> data) {
 
 	mainModule->getOrInsertGlobal("Fonts", llvm::ArrayType::get(builder.getInt8Ty(), 80));
 	Fonts = mainModule->getNamedGlobal("Fonts");
-	Fonts->setLinkage(llvm::GlobalValue::CommonLinkage);
-	Fonts->setAlignment(1);
+	Fonts->setLinkage(llvm::GlobalValue::PrivateLinkage);
+	Fonts->setAlignment(16);
 
 	std::vector<llvm::Constant*> fontValues;
 	for (unsigned char f : Fontset) {
@@ -565,7 +573,7 @@ llvm::GlobalVariable* Generator::BuildRegister(llvm::Type *const &type, unsigned
 	mainModule->getOrInsertGlobal(name, type);
 	llvm::GlobalVariable *gVar = mainModule->getNamedGlobal(name);
 	gVar->setLinkage(llvm::GlobalValue::CommonLinkage);
-	gVar->setAlignment(1);
+	gVar->setAlignment(size/8);
 
 	auto val = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(size, 0));
 	gVar->setInitializer(val);
