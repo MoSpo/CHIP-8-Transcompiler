@@ -484,9 +484,6 @@ Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> d
 			llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, name, mainModule);
 			functions.push_back(f);
 			functionMap[block] = f;
-			if (block->blockID == 0) { //setup entry block if found
-				blockMap[block] = llvm::BasicBlock::Create(context, std::to_string(block->blockID), f);
-			}
 		}
 	}
 }
