@@ -1,9 +1,10 @@
-#C8LLVM
+# C8LLVM
 
-##How to use the C8LLVM project#
+## How to use the C8LLVM project
 
-1. make C8LLVM. C8LLVM depends on the LLVM libraries which can be built from: http://releases.llvm.org/download.html
-Follow the guides below if you need help:
+1. Run make. C8LLVM depends on the LLVM libraries which can be built from: http://releases.llvm.org/download.html
+(Follow the guides below if you need help)
+
 https://llvm.org/docs/CMake.html
 https://llvm.org/docs/GettingStartedVS.html
 
