@@ -135,7 +135,6 @@
   <ItemGroup>
     <ClCompile Include="Ast.cpp" />
     <ClCompile Include="Parser.cpp" />
-    <ClCompile Include="Tracker.cpp" />
     <ClCompile Include="Generator.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
@@ -144,7 +143,6 @@
     <ClInclude Include="Flags.h" />
     <ClInclude Include="Generator.h" />
     <ClInclude Include="Parser.h" />
-    <ClInclude Include="Tracker.h" />
     <ClInclude Include="Lib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

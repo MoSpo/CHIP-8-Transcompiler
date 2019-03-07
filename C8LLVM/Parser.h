@@ -50,7 +50,7 @@ private:
 	Ast* OP_FX1_();
 
 	Ast* OP_FX29(); //"FX29", "VI = FONT @ V[X]", { 0x0F00 }); }
-	Ast* OP_FX33(); //"FX33", "VI = BCD(V[X])", { 0x0F00 }); }
+	Ast* OP_FX33(); //"FX33", "Put BCD(V[X]) into MEMORY @ VI", { 0x0F00 }); }
 	Ast* OP_FX55(); //"FX55", "Put V0-[X] into MEMORY @ VI", { 0x0F00 }); }
 	Ast* OP_FX65(); //"FX65", "Put MEMORY @ VI into V0-[X]", { 0x0F00 }); }
 
@@ -68,9 +68,8 @@ private:
 
 	std::vector<unsigned short> (Parser::*BR_Table_F000[16])(unsigned short Index) { &Parser::BR_00EE, &Parser::BR_1NNN, &Parser::BR_2NNN, &Parser::BR_IF, &Parser::BR_IF, &Parser::BR_IF, &Parser::BR_NULL, &Parser::BR_NULL, &Parser::BR_NULL, &Parser::BR_IF, &Parser::BR_NULL, &Parser::BR_BNNN, &Parser::BR_NULL, &Parser::BR_NULL, &Parser::BR_IF, &Parser::BR_NULL };
 
-	unsigned short MemoryToBinaryAddress(unsigned short memoryAdr);
+	std::vector<unsigned char> GetData(unsigned short dataPartition);
 
-	unsigned short FindDataPartition();
 	std::map<unsigned short, BasicBlock*> CreateBlocks(unsigned short dataPartition);
 	std::map<unsigned short, BasicBlock*> LinkBlocks(std::map<unsigned short, BasicBlock*> blocksWithEntryAddresses);
 	std::vector<BasicBlock*> FillBlocks(std::map<unsigned short, BasicBlock*> emptyBlocks, unsigned short dataPartition);
@@ -81,12 +80,12 @@ private:
 
 	unsigned short word;
 	unsigned char* program;
-	bool isFunction;
 	unsigned int programLength;
 
 public:
-
-	Ast* ParseInput();
+	unsigned short FindDataPartition();
+	std::vector<BasicBlock*> ParseCode(unsigned short dataPartition);
+	std::vector<unsigned char> ParseData(unsigned short dataPartition);
 	Ast* SimpleParseInput();
 
 	Parser(unsigned char p[], unsigned int l);

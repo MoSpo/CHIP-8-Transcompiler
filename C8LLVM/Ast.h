@@ -7,9 +7,7 @@ public:
 	unsigned char operandsAmount;
 	unsigned short instructionID;
 	std::string stringID;
-	//memeory location
 	Ast* nextInstruction;
-	Ast* functionLink; // link to function header
 
 	Ast(unsigned short iID, std::string sID, std::vector<unsigned int> operandVector, unsigned char opsAmt);
 	~Ast();
@@ -18,15 +16,16 @@ public:
 class BasicBlock {
 public:
 	bool isFunctionBlock;
-	unsigned int entryCount;
-	unsigned int exitCount;
+	bool hasExplicitBranch;
+	unsigned short visitedByFunctionID;
 	unsigned short blockID; //the address of the first instruction in the block
-	std::vector<unsigned short> entryAddresses;
-	std::vector<BasicBlock*> entryBlocks;
-	std::vector<BasicBlock*> exitBlocks;
+	//std::vector<unsigned short> entryAddresses;
+	//std::vector<BasicBlock*> entryBlockLinks;
+	std::vector<BasicBlock*> functionBlockLinks;
+	std::vector<BasicBlock*> exitBlockLinks;
 	Ast* code;
 	void MergeIntoBlock(BasicBlock* blockToMerge); //simplify 2 blocks
-	BasicBlock();
+	BasicBlock(unsigned short ID);
 	~BasicBlock();
 };
 #endif

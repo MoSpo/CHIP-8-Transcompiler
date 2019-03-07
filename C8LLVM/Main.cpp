@@ -47,10 +47,15 @@ int main(int argc, char *argv[]) {
 	if (OpenInputFile(argc, argv)) {
 		if (!ReadFlags(argc, argv)) return -1;
 
-		Parser l{program, length};
+		Parser p{program, length};
+		unsigned short prtn = p.FindDataPartition();
+		Generator g{p.ParseCode(prtn), p.ParseData(prtn), prtn};
+		g.Generate();
+
+		/*Parser l{program, length};
 		Ast* entry = l.SimpleParseInput();
 		Generator g{entry};
-		g.Generate();
+		g.Generate();*/
 	}
 	else return -1;
 	return 0;
