@@ -12,7 +12,7 @@ https://llvm.org/docs/GettingStartedVS.html
 
 3. Create an object file with the output using llc (part of the LLVM library).
 
-4. Link this with IOFIle.cpp and IOFile.h found in the Output folder. LOFIle depends on SDL2.h:
+4. Link this with IOFIle.cpp and IOFile.h found in the Output folder. IOFile.cpp depends on SDL2.h:
 https://www.libsdl.org/
 
 5. Run produced file.
