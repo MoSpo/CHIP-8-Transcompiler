@@ -1,6 +1,10 @@
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#include<SDL.h>
+#else
+#include<SDL2/SDL.h>
+#endif
 #include <time.h>
 #include <stdlib.h>
-#include <SDL.h>
 #include "IOFile.h"
 
 static unsigned char Display[64][32];
@@ -19,7 +23,7 @@ unsigned char GetDelayTimer() {
 unsigned char GetSoundTimer() {
 
 }
-
+extern "C" {
 unsigned char GetRand() {
 	return (rand() % 256);
 }
@@ -29,11 +33,11 @@ unsigned char SetPixel(unsigned char x, unsigned char y, unsigned char bit) {
 	Display[x][y] ^= bit;
 	return previous;
 }
-
+}
 void ClearDisplay() {
 
 }
-
+extern "C" {
 void IOInit() {
 	srand(time(0));
 	int scale = 20;
@@ -83,7 +87,7 @@ void IOLoop() {
 	// Render the rect to the screen
 	SDL_RenderPresent(renderer);
 }
-
+}
 bool GetKeyPress() {
 
 }

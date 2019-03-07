@@ -184,7 +184,7 @@ void Generator::OP_9XY0(){
 #pragma endregion
 
 void Generator::OP_ANNN(){
-	auto nnn = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(16, currentNode->operands[1] - 512 - codeLength)); //so that we can use this to read propery into our array - we also don't need the exact value of rI, so can do this
+	auto nnn = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(16, currentNode->operands[0] - 512 - codeLength)); //so that we can use this to read propery into our array - we also don't need the exact value of rI, so can do this
 	builder.CreateStore(nnn, rI);
 
 	//auto flagSet = llvm::ConstantInt::get(mainModule->getContext(), llvm::APInt(1, 0));
@@ -309,7 +309,6 @@ void Generator::OP_DXYN(){
 	builder.CreateCondBr(eqn, exit, outerloop);
 	//exit
 	builder.SetInsertPoint(exit);
-	blockMap[currentBlock] = exit;
 }; //"DXYN", "Draw to screen", { 0x0F00, 0x00F0, 0x000F }); }
 
 void Generator::OP_EX__(){}; // "EXA1", "If KEY[V[X]] not pressed, skip next instruction", { 0x0F00 }); ("EX9E", "If KEY[V[X]] not pressed, skip next instruction", { 0x0F00 });
@@ -484,9 +483,6 @@ Generator::Generator(std::vector<BasicBlock*> code, std::vector<unsigned char> d
 			llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, name, mainModule);
 			functions.push_back(f);
 			functionMap[block] = f;
-			if (block->blockID == 0) { //setup entry block if found
-				blockMap[block] = llvm::BasicBlock::Create(context, std::to_string(block->blockID), f);
-			}
 		}
 	}
 }
