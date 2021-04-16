@@ -1,5 +1,9 @@
 # C8LLVM
 
+## Note
+
+This repository is old - a vastly updated version of this project exists on an old hard drive; once the drive is backed up I'll replace this
+
 ## How to use the C8LLVM project
 
 `make -C C8LLVM`
@@ -13,6 +17,8 @@
 
 https://llvm.org/docs/CMake.html
 https://llvm.org/docs/GettingStartedVS.html
+
+The makefiles are not general - you'll have to edit them to point to your own copy of LLVM. This project is tested using llvm-7.0.1.
 
 2. Run C8LLVM by passing it a CHIP-8 binary file. If you want to test your own programs, you will need to write plaintext files such as the ones in the Test folder. Build the C8ASM project which will convert your plaintext file into a binary which can be given to C8LLVM. C8LLVM will then output LLVM IR to stdout, which can be piped to a file. The makefile provided uses clang to allow compatability with llvm-config.
 
