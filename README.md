@@ -2,7 +2,7 @@
 
 ## Note
 
-This repository is old - a vastly updated version of this project exists on an old hard drive; once the drive is backed up I'll replace this
+This repository is salvaged from an old dissertation - a vastly updated version of this project exists on an old hard drive; once the drive is backed up I'll replace this
 
 ## How to use the C8LLVM project
 
